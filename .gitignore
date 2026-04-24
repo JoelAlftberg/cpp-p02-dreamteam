@@ -1,0 +1,39 @@
+# Ignore everything without an extension.
+*
+!*.*
+!*/
+
+# Don't ignore makefiles.
+!makefile
+!Makefile
+
+# Don't ignore license files.
+!LICENSE
+
+# Ignore .txt files.
+*.txt
+
+# Ignore solution files.
+*atsln
+
+# Ignore CMake files other than CMakeLists.txt.
+*CMakeCache.txt
+*CMakeFiles
+*cmake_install.Makefile
+*cmake_install.cmake
+
+# Ignore Python cache.
+*__pycache__/
+
+# Ignore vscode directory.
+*vscode/
+*vs/
+
+# Ignore debug folder.
+*Debug/
+
+# Ignore build folder.
+*build/
+
+# Ignore SDK config files.
+*sdkconfig
