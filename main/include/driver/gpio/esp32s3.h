@@ -2,31 +2,28 @@
 #pragma once
 
 #include "driver/gpio/interface.h"
+#include "driver/gpio.h"
+#include "driver/gpio/mode.h"
+#include <cstdint>
 
 
 namespace driver::gpio
 {
 
 
-    class Esp32s3 final : public Interface
-    {
-        public:
-            //Constructor
-            explicit init(std::uint32_t pin) noexcept;
+class Esp32s3 final : public Interface
+{
+public:
+    explicit Esp32s3(const std::uint8_t pin, const Mode mode) noexcept;
+    void on() noexcept override;
+    void off() noexcept override;
+    void toggle() noexcept override;
+    bool read() const noexcept override;
+private:
+    const std::uint8_t myPin;
+    const Mode myMode;
+    bool myState;
 
-            void on(std::uint32_t pin) noexcept override;
-
-            void off(std::uint32_t pin) noexcept override;
-
-            bool read(std::uint32_t pin) noexcept override;
-
-            void toggle(std::uint32_t pin, const std::uint32_t timeout_ms) noexcept override;
-
-        private:
-
-
-
-
-    }
+}
 
 }// namespace driver::gpio
