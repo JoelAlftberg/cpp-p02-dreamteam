@@ -1,6 +1,4 @@
 #pragma once
-
-#include <array>
 #include <cstdint>
 
 #include "driver/serial/interface.h"
@@ -10,8 +8,8 @@
 namespace driver::serial
 {
 
-static constexpr std::size_t RxBufSize{128U};
-static constexpr std::size_t TxBufSize{128U};
+static constexpr std::size_t RxBufSize{256U};
+static constexpr std::size_t TxBufSize{256U};
 
 class Esp32s3 final : public Interface
 {
