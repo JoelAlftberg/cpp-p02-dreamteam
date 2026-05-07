@@ -11,7 +11,7 @@ public:
  * @param[in] pin ADC pin. Must be supported by ESP32-S3.
  */
     Stub() noexcept
-        : myState{false}
+        : myState{true}
         , myInput{0U}
     {
         std::printf("Stub ADC created.\n");
