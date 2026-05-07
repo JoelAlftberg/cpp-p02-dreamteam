@@ -1,20 +1,21 @@
 #include <cstdint>
 #include <cstdio>
 #include "driver/tempsensor/esp32s3.h"
-#include "driver/tempsensor/interface.h"
+#include "driver/temperature_sensor.h"
+
 
 
 namespace driver::tempsensor {
 
 Esp32s3::Esp32s3() noexcept :
-    handle{}
+    handle{},
+    myState{false}
 {
     constexpr int rangeMin{20};
     constexpr int rangeMax{50};
-    temperature_sensor_config_t config{
-        TEMPERATURE_SENSOR_CONFIG_DEFAULT(rangeMin, rangeMax)};
+    temperature_sensor_config_t config = 
+        TEMPERATURE_SENSOR_CONFIG_DEFAULT(rangeMin, rangeMax);
     temperature_sensor_install(&config, &handle);
-    temperature_sensor_start(handle); 
 }
 
 Esp32s3::~Esp32s3() noexcept
@@ -39,12 +40,14 @@ std::int16_t Esp32s3::readCelsius() const noexcept
 
 void Esp32s3::start() noexcept
 {
-    temperature_sensor_start(handle);
+    temperature_sensor_enable(handle);
+    myState = true;
 }
 
 void Esp32s3::stop() noexcept
 {
-    temperature_sensor_stop(handle);
+    temperature_sensor_disable(handle);
+    myState = false;
 }
 
 } // namespace driver::tempsensor

@@ -2,7 +2,9 @@
 
 #include <cstdint>
 #include "driver/tempsensor/interface.h"
-#include "temperature_sensor.h"
+#include "hal/temperature_sensor_types.h"
+#include "driver/temperature_sensor.h"
+
 
 namespace driver::tempsensor{
 
@@ -16,13 +18,14 @@ public:
     /**
      * @brief Destructor.
      */
-    ~Esp32s3() noexcept override = default;
+    ~Esp32s3() noexcept override;
     std::int16_t readCelsius() const noexcept override;
     void start() noexcept override;
     void stop() noexcept override;
 
 private:
-    temperature_sensor_handle_t handle;
+    temperature_sensor_handle_t handle{};
+    bool myState {false};
 };
 
 } // namespace driver::tempsensor

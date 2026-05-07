@@ -8,7 +8,7 @@ class Stub final : public Interface {
 public:
     Stub() noexcept
         : status{false},
-        temp{0U}
+        myTemp{0U}
     {
         std::printf("Stub temperature sensor created.\n");
     }
@@ -18,17 +18,22 @@ public:
         std::printf("Stub temperature sensor destroyed.\n");
     }
    
-    std::int16_t readCelsius() const noexcept {
-        return temp;
+    std::int16_t readCelsius() const noexcept override{
+        if (!started) return 0;
+        return myTemp;
 
     }
-    void start() noexcept {
+
+    void start() noexcept override {
         status = true;
-
     }
-    void stop() noexcept {
+
+    void stop() noexcept override {
         status = false;
 
+    }
+    void simulatemyTemp(std::int16_t temp) noexcept { 
+        myTemp = temp;
     }
  
     Stub(const Stub&)                   = delete;
@@ -38,6 +43,6 @@ public:
 
 private:
     bool status;
-    std::uint16_t temp;
+    std::int16_t myTemp;
 };
 } // namespace driver::tempsensor

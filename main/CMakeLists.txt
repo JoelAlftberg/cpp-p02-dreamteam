@@ -7,8 +7,12 @@ idf_component_register(
         "source/driver/serial/esp32s3.cpp"
         "source/driver/tempsensor/esp32s3.cpp"
         "source/driver/timer/esp32s3.cpp"
+        "source/driver/tempsensor/tmp36.cpp"
     INCLUDE_DIRS
         "include"
-        INCLUDE_DIRS "."
-        REQUIRES esp_driver_tsens
-        )
+        "."
+    REQUIRES
+        esp_driver_gpio
+        esp_adc
+        esp_driver_tsens
+)
