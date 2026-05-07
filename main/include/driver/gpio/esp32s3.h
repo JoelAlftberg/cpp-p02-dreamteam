@@ -6,7 +6,6 @@
 #include "driver/gpio/mode.h"
 #include <cstdint>
 
-
 namespace driver::gpio
 {
 
@@ -24,6 +23,6 @@ private:
     const Mode myMode;
     bool myState;
 
-}
+};
 
 }// namespace driver::gpio
