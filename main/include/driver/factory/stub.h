@@ -37,6 +37,11 @@ public:
         return std::make_unique<tempsensor::Stub>();
     }
 
+    std::unique_ptr<config::Interface> config() noexcept override
+    {
+        return std::make_unique<config::Stub>();
+    }
+
 };
 
 }

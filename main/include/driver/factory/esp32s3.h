@@ -5,10 +5,14 @@
 
 #include "driver/serial/interface.h"
 #include "driver/factory/interface.h"
+#include "driver/adc/esp32s3.h"
+#include "driver/config/esp32s3.h"
+#include "driver/gpio/esp32s3.h"
+#include "driver/tempsensor/esp32s3.h"
+#include "driver/timer/esp32s3.h"
 
 namespace driver::factory
 {
-
 class Esp32s3 final : public Interface 
 {
 public:
@@ -40,6 +44,10 @@ public:
         return std::make_unique<tempsensor::Esp32s3>();
     }
 
+    std::unique_ptr<config::Interface> config() noexcept override
+    {
+        return std::make_unique<config::Esp32s3>();
+    }
 };
 
 }

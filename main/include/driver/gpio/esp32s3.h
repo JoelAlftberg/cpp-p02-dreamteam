@@ -14,6 +14,7 @@ class Esp32s3 final : public Interface
 {
 public:
     explicit Esp32s3(const std::uint8_t pin, const Mode mode) noexcept;
+    ~Esp32s3() noexcept;
     void on() noexcept override;
     void off() noexcept override;
     void toggle() noexcept override;
