@@ -19,7 +19,7 @@ namespace driver::adc{
 
 namespace
 {
-constexpr adc_channel_t InvalidChannel{static_cast<adc_channel_t>(0xFFU)};
+constexpr adc_channel_t InvalidChannel{static_cast<adc_channel_t>(0x0FU)};
 } // namespace
 /**
  * @brief Converts a pin number to an ADC channel.

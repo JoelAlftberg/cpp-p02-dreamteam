@@ -22,7 +22,6 @@ public:
 private:
     const std::uint8_t myPin;
     const Mode myMode;
-    bool myState;
 
 };
 

@@ -17,7 +17,6 @@ namespace driver::gpio
     Esp32s3::Esp32s3(const std::uint8_t pin, const Mode mode) noexcept
         : myPin{pin}
         , myMode{mode}
-        , myState{false}
     {
         gpio_config_t conf{};
         conf.pin_bit_mask = (1ULL << myPin);
