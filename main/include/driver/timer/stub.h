@@ -7,6 +7,11 @@
 namespace driver::timer
 {
 
+struct StubSettings final : public Settings
+{
+    
+};
+
 class Stub final : public Interface
 {
 public:

@@ -1,10 +1,21 @@
 #pragma once
+
 #include <cstdint>
+
 #include "driver/tempsensor/interface.h"
 #include "driver/adc/interface.h"
+#include "driver/adc/types.h"
 
-namespace driver::tempsensor{
-class Tmp36 final : public Interface {
+namespace driver::tempsensor
+{
+
+struct TMP36Settings final : public Settings
+{
+    adc::Id adc;
+};
+
+class Tmp36 final : public Interface 
+{
 public:
     explicit Tmp36(driver::adc::Interface& adc) noexcept ;
     ~Tmp36() noexcept override;

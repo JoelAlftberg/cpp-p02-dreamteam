@@ -1,36 +1,28 @@
-#include <cstdint>
-#include "driver/gpio/esp32s3.h"
-#include "driver/timer/esp32s3.h"
-#include "driver/timer/interface.h"
-#include "driver/gpio/interface.h"
+#include "driver/factory/stub.h"
+#include "driver/config/stub.h"
+#include "app/logic/logic.h"
 
 #include "esp_log.h"
 #include "freertos/FreeRTOS.h"
+#include "freertos/projdefs.h"
 #include "freertos/task.h"
+
+#include <cstddef>
+#include <memory>
 
 extern "C" void app_main(void)
 {
-    driver::gpio::Esp32s3 led{2U, driver::gpio::Mode::Output};
-    driver::timer::Esp32s3 timer{1000};
-    timer.start();
-    led.on();
+    auto config = std::make_unique<driver::config::Stub>(); 
+    auto factory = std::make_unique<driver::factory::Stub>();
 
-    ESP_LOGI("main", "Starting timer!"); 
-    ESP_LOGI("main", "Enable LED!");
+    app::logic::Logic logic{*factory, *config};
+
+    logic.initialize();
 
     while (true)
     {
-        constexpr std::uint32_t loopDelay_ms{10U};
-
-        if (timer.hasTimedOut()) 
-        {
-            ESP_LOGI("main", "LED toggled!"); 
-            led.toggle(); 
-
-            // Reset the watchdog indirectly.
-            // Later; use generic delay function, which calls this function if we're using ESP32-drivers.
-            vTaskDelay(pdMS_TO_TICKS(loopDelay_ms));
-        }
+        logic.run();
+        vTaskDelay(pdMS_TO_TICKS(10));
     }
 
 }

@@ -8,6 +8,13 @@
 
 namespace driver::gpio
 {
+
+struct StubSettings final : public Settings
+{
+    std::uint8_t pin;
+    Mode mode;
+};
+
 class Stub final : public Interface
 {
 public:
@@ -16,6 +23,7 @@ public:
         , myMode{mode}
         , myState{false}
     {
+        (void)myMode;
         std::printf("Initializing GPIO pin %u with mode %u\n", pin, static_cast<std::uint8_t>(mode));
     }
 

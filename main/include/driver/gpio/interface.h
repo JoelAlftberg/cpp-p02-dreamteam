@@ -3,10 +3,14 @@
  */
 #pragma once
 
-#include <cstdint>
-
 namespace driver::gpio
 {
+
+struct Settings
+{
+    bool isEnabled = false;
+};
+
 /**
  * @brief GPIO interface.
  */

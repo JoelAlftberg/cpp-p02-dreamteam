@@ -1,9 +1,17 @@
-#include <chrono>
 #pragma once
 
+#include <chrono>
+#include <cstdint>
 
 namespace driver::timer
 {
+
+struct Settings
+{
+    bool isEnabled = false;
+    std::uint32_t timeout_ms = 1000;
+};
+
 class Interface
 {
 public:

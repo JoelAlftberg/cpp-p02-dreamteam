@@ -6,6 +6,12 @@
 
 namespace driver::timer
 {
+
+struct Esp32s3Settings final : public Settings
+{
+
+};                        
+
 class Esp32s3 final : public Interface
 {
 public:
