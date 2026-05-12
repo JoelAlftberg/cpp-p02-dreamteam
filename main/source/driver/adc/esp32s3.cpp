@@ -3,7 +3,8 @@
 #include <cstdio>
 
 // ESP32-specific headers.
-#include "esp_adc/adc_oneshot.h"
+#include <driver/adc/esp32s3.h>
+#include <esp_adc/adc_oneshot.h>
 #include <esp_adc/adc_continuous.h>
 #include <esp_adc/adc_cali.h>
 #include <esp_adc/adc_cali_scheme.h>
@@ -79,9 +80,10 @@ Esp32s3::Esp32s3(std::uint8_t pin) noexcept
  * @brief Destructor.
  * 
  */
- Esp32s3::~Esp32s3() noexcept{ 
+ Esp32s3::~Esp32s3() noexcept{
     // Genomför cleanup; se till att frigöra resurser och hantera eventuella fel.
     adc_oneshot_del_unit(myHandle);
+    return;
  }
 
 

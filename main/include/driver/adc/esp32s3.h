@@ -23,7 +23,7 @@ public:
 
 private:
     adc_oneshot_unit_handle_t myHandle;
-    adc_channel_t myChannel;
+    const adc_channel_t myChannel;
     bool myInitialized;
     
 };
