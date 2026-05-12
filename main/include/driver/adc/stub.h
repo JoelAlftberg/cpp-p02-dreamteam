@@ -1,5 +1,6 @@
 #pragma once
 #include <cstdint>
+#include <cstdio>
 #include "driver/adc/interface.h"
 
 namespace driver::adc{
@@ -23,7 +24,7 @@ public:
 
 
     ~Stub() noexcept {
-        std::printf("Stub ADC destroyed.\n")
+        std::printf("Stub ADC destroyed.\n");
     }
     bool isInitialized() const noexcept override { 
         return myState;
@@ -44,8 +45,8 @@ public:
     }
     Stub(const Stub&)                   = delete;
     Stub(Stub&&)                        = delete;
-    Stub& operator = (const Stub&)      = delete;
-    Stub& operator(Stub&&)              = delete;
+    Stub& operator=(const Stub&)              = delete;
+    Stub& operator=(Stub&&)              = delete;
 
 private:
     bool myState;
