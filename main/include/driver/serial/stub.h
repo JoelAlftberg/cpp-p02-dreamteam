@@ -23,11 +23,15 @@ class Stub final : public Interface
 public:
 
     explicit Stub()
-    {}
+    {
+        std::cout << "Stub serial device created" << "\n";
+    }
 
     bool initialize() noexcept override 
     {
 	    initialized_ = true;
+        const char* msg = "Serial initialized\n";
+        write(msg);
         return initialized_;
     }
 
@@ -47,6 +51,12 @@ public:
         std::memcpy(outBuf, buf_ + readPos_, bytesToRead);
         readPos_ += bytesToRead;
         bufLen_ -= bytesToRead;
+
+        if (bufLen_ == 0)
+        {
+            readPos_ = 0;
+        }
+
         return bytesToRead;
     }
 
@@ -64,7 +74,6 @@ public:
         rxBuf_[index] = '\0';
         return reinterpret_cast<const char*>(rxBuf_);
     }
-
 
     int write(std::uint8_t byte) noexcept override 
     {

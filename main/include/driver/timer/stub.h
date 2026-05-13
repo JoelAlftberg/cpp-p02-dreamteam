@@ -72,7 +72,8 @@ public:
      */
     void tick() noexcept override
     {
-        if (myRunning) { myCounter_us++; }
+        /** The number 10000 is tied to the task delay in main of 10 ms **/
+        if (myRunning) { myCounter_us += 10000U; }
     }
 
     Stub()                      = delete;

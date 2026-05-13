@@ -3,6 +3,7 @@
 #include <chrono>
 
 #include "driver/config/stub.h"
+#include "driver/serial/stub.h"
 
 namespace driver::config
 {
@@ -17,6 +18,11 @@ Stub::Stub() noexcept
     auto& blinkTimer = timerConfigs_[static_cast<std::size_t>(timer::Id::Blink)];
     blinkTimer.isEnabled = true;
     blinkTimer.timeout_ms = 1000U;
+
+    auto& temperatureTimer = timerConfigs_[static_cast<std::size_t>(timer::Id::Temperature)];
+    temperatureTimer.isEnabled = true;
+    temperatureTimer.timeout_ms = 500U;
+
 }
 
 void Stub::delay_ms(std::uint16_t ms) noexcept 

@@ -29,7 +29,7 @@ public:
         return std::make_unique<gpio::Esp32s3>(pin, mode);
     }
 
-    std::unique_ptr<serial::Interface> serial(serial::Config config) const noexcept override
+    std::unique_ptr<serial::Interface> serial(serial::Config config) noexcept override
     {
         return std::make_unique<serial::Esp32s3>(config);
     }
@@ -39,7 +39,7 @@ public:
         return std::make_unique<timer::Esp32s3>(timeout_ms);
     }
 
-    std::unique_ptr<tempsensor::Interface> tempsensor() const noexcept override
+    std::unique_ptr<tempsensor::Interface> tempsensor() noexcept override
     {
         return std::make_unique<tempsensor::Esp32s3>();
     }

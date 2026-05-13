@@ -32,9 +32,11 @@ public:
         return std::make_unique<gpio::Stub>(gpioSettings.pin, gpioSettings.mode);
     }
 
-    std::unique_ptr<serial::Interface> serial(const serial::Settings& settings) const noexcept override
+    std::unique_ptr<serial::Interface> serial(const serial::Settings& settings) noexcept override
     {
-        return std::make_unique<serial::Stub>();
+        auto stub = std::make_unique<serial::Stub>(); 
+        serialStub_ = stub.get();
+        return stub;
     }
 
     std::unique_ptr<timer::Interface> timer(const timer::Settings& settings) const noexcept override
@@ -45,10 +47,26 @@ public:
 
     std::unique_ptr<tempsensor::Interface> tempsensor(
             const tempsensor::Settings& settings
-            ) const noexcept override
+            ) noexcept override
     {
-        return std::make_unique<tempsensor::Stub>();
+        auto stub = std::make_unique<tempsensor::Stub>();
+        tempsensorStub_ = stub.get();
+        return stub;     
     }
+
+    driver::tempsensor::Stub* getTempsensorStub() const
+    {
+        return tempsensorStub_;
+    }
+
+    driver::serial::Stub* getSerialStub() const
+    {
+        return serialStub_;
+    }
+
+private:
+    driver::tempsensor::Stub* tempsensorStub_{nullptr};
+    driver::serial::Stub* serialStub_{nullptr};
 
 };
     
