@@ -48,7 +48,6 @@ public:
      */
     virtual bool publish(const char* broker, const std::uint8_t* buf, std::uint8_t bufLen) noexcept = 0;
 
-  
 
     /**
      * @brief Receive data from subscribed broker.
