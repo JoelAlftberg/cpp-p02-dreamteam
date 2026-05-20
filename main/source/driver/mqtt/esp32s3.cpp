@@ -126,7 +126,6 @@ void Esp32s3::mqttEventHandler(void* handler_args, esp_event_base_t base,
                 ESP_LOGI(Tag, "Topic: %s", topic.c_str());
                 ESP_LOGI(Tag, "Payload: %s", payload.c_str());
             }
-
             instance->storeReceivedData(event->data, event->data_len);
             break;
         }

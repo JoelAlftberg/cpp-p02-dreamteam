@@ -49,10 +49,7 @@ public:
         if ((nullptr == msg) || (nullptr == broker)) { return false; }
         std::printf("%s", msg);
         return true;
-        
-
     }
-
     /**
      * @brief Public message to broker.
      *

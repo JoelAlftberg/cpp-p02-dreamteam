@@ -150,7 +150,6 @@ public:
 private:
     static void mqttEventHandler(void* handler_args, esp_event_base_t base, 
                                  int32_t event_id, void* event_data);
-
     void storeReceivedData(const char* data, std::uint8_t dataLen) noexcept;
 
     constexpr uint8_t MaxBufLen{128U};
