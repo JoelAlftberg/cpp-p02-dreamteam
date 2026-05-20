@@ -4,6 +4,8 @@
 
 namespace app::logic
 {
+
+
 enum class Commands 
 {
     Led,
@@ -11,14 +13,31 @@ enum class Commands
     Period,
     Status,
     Temp,
-    Save
+    Save,
+    UNKNOWN,
 }; 
+
+struct CommandMapping 
+{
+    const char* str;
+    Commands cmd;
+};
+
+CommandMapping commandTable[] =
+{
+    {"led", Commands::Led},
+    {"blink", Commands::Blink},
+    {"period", Commands::Period},
+    {"temp", Commands::Temp},
+    {"status", Commands::Status}
+};
+
+constexpr std::size_t CommandCount = sizeof(commandTable) / sizeof(commandTable[0]);
 
 struct Command
 {
-    /** Since the commands are at most 6 characters long we set the array size to 8 **/
-    char cmd[8U];
-    char args[2U][8U];
+    Commands command;
+    char args[3U][16U];
     std::size_t argCount;
 };
 

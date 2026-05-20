@@ -13,10 +13,8 @@
 
 #include <array>
 #include <cstddef>
-#include <format>
-#include <iostream>
 #include <memory>
-#include <string>
+#include <string.h>
 
 using driver::utils::to_idx;
 
@@ -64,24 +62,6 @@ public:
 // -----------------------------------------------------------------------------
     void initialize() noexcept 
     {
-        auto& blinkTimer = timers_[to_idx(driver::timer::Id::Blink)]; 
-        if (blinkTimer)
-        {
-            blinkTimer->start();
-        }
-
-        auto& temperatureTimer = timers_[to_idx(driver::timer::Id::Temperature)]; 
-        if (temperatureTimer)
-        {
-            temperatureTimer->start();
-        }
-
-        auto& led = gpios_[to_idx(driver::gpio::Id::LedYellow)];
-        if (led)
-        {
-            led->on();
-        }
-
         serial_->initialize();
         tempsensor_->start();
     }
@@ -90,40 +70,51 @@ public:
     void run() noexcept override
     { 
         auto& blinkTimer = timers_[to_idx(driver::timer::Id::Blink)]; 
-        auto& temperatureTimer = timers_[to_idx(driver::timer::Id::Temperature)];
         auto& ledYellow = gpios_[to_idx(driver::gpio::Id::LedYellow)];
 
         blinkTimer->tick();
-        temperatureTimer->tick();
 
         if(blinkTimer->hasTimedOut())
         {
             ledYellow->toggle();
         }
-        
-        if(temperatureTimer->hasTimedOut())
-        {
-            std::int16_t temperatureReading = tempsensor_->readCelsius();
-            std::string temperatureString = std::format("Tempsensor reading: {}\n", temperatureReading);
-            serial_->write(temperatureString.c_str());
-        }
 
         char incomingByte;
         while (serial_->readBytes(reinterpret_cast<uint8_t*>(&incomingByte), 1) > 0)
         {
-            if (incomingByte == '\n' or incomingByte == '\r')
+            if (incomingByte == '\n' || incomingByte == '\r')
             {
-                std::cout << "Logic: Command recieved: " << messageAccumulator_.c_str() << "\n";
-                Command cmd = parseCommand(messageAccumulator_.c_str());
+                char printBuffer[80U];
+                int bytesWritten = std::snprintf(printBuffer, sizeof(printBuffer), "Serial input received: %s\n", messageAccumulator_);
+                
+                if (bytesWritten >= static_cast<int>(sizeof(printBuffer)))
+                {
+                    /* Truncate output string when it's too long */
+                    std::memcpy(&printBuffer[sizeof(printBuffer) - 5], "...\n", 5);
+                }
+                
+                serial_->write(printBuffer);
+
+                Command cmd = parseCommand(messageAccumulator_);
                 runCommand(cmd);
-                messageAccumulator_.clear();
-            }
-            else
+                messageLength_ = 0U;
+                messageAccumulator_[messageLength_] = '\0';
+
+            } 
+            else if (incomingByte == '\b' || incomingByte == 127)
             {
-                messageAccumulator_ += incomingByte;
+                if (0U < messageLength_)
+                {
+                    messageLength_--;
+                    messageAccumulator_[messageLength_] = '\0'; 
+                }
+            }
+            else if (messageLength_ < (sizeof(messageAccumulator_) - 1U))
+            { 
+                messageAccumulator_[messageLength_++] = incomingByte;
+                messageAccumulator_[messageLength_] = '\0';
             }
         }
-
     }
 // -----------------------------------------------------------------------------
     bool isInitialized() const noexcept override
@@ -133,11 +124,139 @@ public:
 // -----------------------------------------------------------------------------
     Command parseCommand(const char* input) noexcept override
     {
-        return Command{};
+        Command cmd{};
+
+        /* Tokenize the string on whitespace */
+        char buffer[256];
+        std::strncpy(buffer, input, sizeof(buffer) - 1);
+        buffer[sizeof(buffer) -1] = '\0';
+
+        const std::uint8_t MAX_TOKENS = 5;
+        char* tokens[MAX_TOKENS];
+        std::uint8_t token_count = 0;
+        
+        char* token = std::strtok(buffer, " ");
+        
+        while(nullptr != token && MAX_TOKENS != token_count)
+        {
+            tokens[token_count++] = token;
+            token = std::strtok(nullptr, " ");
+        }
+
+        if (0 == token_count)
+        {
+            cmd.command = Commands::UNKNOWN;
+        }
+
+        bool foundCommand{false};
+
+        for (std::size_t i = 0; i < CommandCount; ++i)
+        {
+            if (0 == std::strcmp(tokens[0], commandTable[i].str))
+            {
+                cmd.command = commandTable[i].cmd;
+                foundCommand = true;
+                break;
+            }
+        }
+        
+        if (!foundCommand) { cmd.command = Commands::UNKNOWN; }
+
+        for (std::size_t j = 1; j < token_count && cmd.argCount < 2; j++)
+        {
+            std::strncpy(cmd.args[cmd.argCount], tokens[j], sizeof(cmd.args[0]) - 1);
+            cmd.args[cmd.argCount][sizeof(cmd.args[0]) - 1] = '\0';
+            cmd.argCount++;
+        }
+        
+        return cmd;
     }
 // -----------------------------------------------------------------------------
     void runCommand(Command cmd) noexcept override
-    {}
+    {
+        auto& ledYellow = gpios_[to_idx(driver::gpio::Id::LedYellow)];
+        auto& blinkTimer = timers_[to_idx(driver::timer::Id::Blink)]; 
+
+        switch (cmd.command)
+        {
+            case Commands::Led:
+            {
+                if (blinkTimer->isRunning()) { break; }
+                if (0 == std::strcmp("on", cmd.args[0]))
+                {
+                    ledYellow->on();
+                }
+                else if (0 == std::strcmp("off", cmd.args[0]))
+                {
+                    ledYellow->off();
+                }
+                break;
+            }
+            case Commands::Blink:
+            {
+                if (0 == std::strcmp("on", cmd.args[0]))
+                {
+                    blinkTimer->start();
+                }
+                else if (0 == std::strcmp("off", cmd.args[0]))
+                {
+                    blinkTimer->stop();
+                    ledYellow->off();
+                }
+                break;
+            }
+            case Commands::Period:
+            {
+                char serialBuffer[80U];
+
+                if (cmd.argCount < 1)
+                {
+                    std::snprintf(serialBuffer, sizeof(serialBuffer), "Error: Missing argument, please provide a time in milliseconds\n");
+                    serial_->write(serialBuffer);
+                    break;
+                }
+
+                char* endPtr = nullptr;
+
+                std::uint32_t parsedPeriodMs = static_cast<std::uint32_t>(std::strtoul(cmd.args[0], &endPtr, 10));
+                
+                if (endPtr == cmd.args[0] || *endPtr != '\0')
+                {
+                    std::snprintf(serialBuffer, sizeof(serialBuffer), "Error: Argument was not a numerical value\n");
+                    serial_->write(serialBuffer);
+                    break;
+                }
+
+                blinkTimer->setTimeout(parsedPeriodMs);
+
+                std::snprintf(serialBuffer, sizeof(serialBuffer), "Blink period set to %lu ms\n", parsedPeriodMs);
+                serial_->write(serialBuffer);
+                break;
+            }
+            case Commands::Temp:
+            {
+                std::int16_t temperatureReading = tempsensor_->readCelsius();
+
+                char serialBuffer[80U];
+                std::snprintf(serialBuffer, sizeof(serialBuffer), "Tempsensor reading: %u degrees Celsius\n", temperatureReading);
+                serial_->write(serialBuffer);
+
+                break;
+            }
+            case Commands::Status:
+            {
+                char statusBuffer[128U];
+                const char* blinkStatus = (blinkTimer->isRunning() ? "on" : "off");
+                std::uint32_t blinkPeriod = blinkTimer->getTimeout();
+                std::int16_t temperature = tempsensor_->readCelsius();
+                std::snprintf(statusBuffer, sizeof(statusBuffer), "--- Status ---\n - Blink: %s\n - Period: %lu ms\n - Temp: %i deg Celsius\n--------------\n", blinkStatus, blinkPeriod, temperature);
+                serial_->write(statusBuffer);
+                break;
+            }
+            default:
+                break;
+        }
+    }
 
     Logic()                             = delete;
     Logic(const Logic&)                 = delete;
@@ -165,7 +284,9 @@ private:
     /** Temperature sensor **/
     std::unique_ptr<driver::tempsensor::Interface> tempsensor_;
 
-    std::string messageAccumulator_;
+    /* Used for serial input */
+    char messageAccumulator_[80U];
+    std::size_t messageLength_ = 0U;
 };
 
 }

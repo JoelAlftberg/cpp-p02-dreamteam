@@ -31,6 +31,10 @@ public:
 
     void tick() noexcept override;
 
+    void setTimeout(std::uint32_t timeout_ms) noexcept override;
+
+    std::uint32_t getTimeout() noexcept override;    
+
     Esp32s3()                         = delete;
     Esp32s3(const Esp32s3&)           = delete;
     Esp32s3(Esp32s3&&)                = delete;
@@ -40,7 +44,7 @@ public:
 private:
     void updateCounter() noexcept;
 
-    const std::int64_t myTimeout_us;
+    std::int64_t myTimeout_us;
 
     std::int64_t myCounter_us;
 

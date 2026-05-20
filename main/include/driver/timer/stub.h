@@ -76,6 +76,16 @@ public:
         if (myRunning) { myCounter_us += 10000U; }
     }
 
+    void setTimeout(std::uint32_t timeout_ms) noexcept override
+    {
+        myTimeout_us = timeout_ms * 1000U;
+    }
+
+    std::uint32_t getTimeout() noexcept override
+    {
+        return myTimeout_us / 1000;
+    }
+
     Stub()                      = delete;
     Stub(const Stub&)           = delete;
     Stub(Stub&&)                = delete;
@@ -87,7 +97,7 @@ private:
     void updateCounter() noexcept;
 
     /**Timeout in microseconds */
-    const std::int64_t myTimeout_us;
+    std::int64_t myTimeout_us;
 
     /** Internal microseconds counter. */
     std::int64_t myCounter_us;
