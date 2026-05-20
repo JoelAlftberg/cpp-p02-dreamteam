@@ -7,6 +7,7 @@ enum class Id
 {
     Blink,
     Temperature,
+    WifiLed,
     COUNT
 };
 

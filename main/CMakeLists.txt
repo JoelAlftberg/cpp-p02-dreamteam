@@ -1,9 +1,8 @@
 idf_component_register(
     SRCS
         "source/main.cpp"
-        "source/driver/config/stub.cpp"
+        "source/driver/config/esp32s3.cpp"
         "source/driver/adc/esp32s3.cpp"
-        "source/driver/factory/esp32s3.cpp"
         "source/driver/gpio/esp32s3.cpp"
         "source/driver/serial/esp32s3.cpp"
         "source/driver/tempsensor/tmp36.cpp"

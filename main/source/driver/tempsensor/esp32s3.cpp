@@ -23,9 +23,6 @@ Esp32s3::~Esp32s3() noexcept
     temperature_sensor_uninstall(handle);
 }
 
-
-
-
 std::int16_t Esp32s3::readCelsius() const noexcept
 {
     float temp = 0.0f;

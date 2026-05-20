@@ -1,9 +1,10 @@
 #include <cstddef>
-#include <thread>
-#include <chrono>
 
 #include "driver/config/esp32s3.h"
 #include "driver/serial/esp32s3.h"
+
+#include "freertos/FreeRTOS.h"
+#include "freertos/task.h"
 
 namespace driver::config
 {
@@ -15,19 +16,30 @@ Esp32s3::Esp32s3() noexcept
     led.pin = 8U;
     led.mode = gpio::Mode::Output;
 
+    led = gpioConfigs_[static_cast<std::size_t>(gpio::Id::LedBlue)];
+    led.isEnabled = true;
+    led.pin = 9U;
+    led.mode = gpio::Mode::Output;
+
     auto& blinkTimer = timerConfigs_[static_cast<std::size_t>(timer::Id::Blink)];
     blinkTimer.isEnabled = true;
     blinkTimer.timeout_ms = 1000U;
 
-    auto& temperatureTimer = timerConfigs_[static_cast<std::size_t>(timer::Id::Temperature)];
-    temperatureTimer.isEnabled = true;
-    temperatureTimer.timeout_ms = 500U;
+    auto& wifiLedTimer = timerConfigs_[static_cast<std::size_t>(timer::Id::WifiLed)];
+    wifiLedTimer.isEnabled = true;
+    wifiLedTimer.timeout_ms = 1000U;    
+
+    auto& temperatureAdc = adcConfigs_[static_cast<std::size_t>(adc::Id::Temperature)];
+    temperatureAdc.isEnabled = true;
+    temperatureAdc.pin = 11U;
+
+    //serialConfig_.baudRate = 115200U;
 
 }
 
 void Esp32s3::delay_ms(std::uint16_t ms) noexcept 
 {
-    std::this_thread::sleep_for(std::chrono::milliseconds(ms));
+    vTaskDelay(pdMS_TO_TICKS(ms));
 }
 
 const adc::Settings& Esp32s3::getADC(adc::Id id) const noexcept 
