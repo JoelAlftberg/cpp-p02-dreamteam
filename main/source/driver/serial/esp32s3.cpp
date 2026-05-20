@@ -22,6 +22,8 @@ bool Esp32s3::initialize() noexcept
 
     setBaudRate(baudRate_);
     
+    uart_set_pin(port_, 43U, 44U, UART_PIN_NO_CHANGE, UART_PIN_NO_CHANGE);
+    
     initialized_ = (ESP_OK == configStatus  ? true : false);
     return initialized_;
 }

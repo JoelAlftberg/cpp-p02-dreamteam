@@ -6,20 +6,22 @@
 #include "freertos/FreeRTOS.h"
 #include "freertos/task.h"
 
+#include "driver/uart.h"
+
 namespace driver::config
 {
 
 Esp32s3::Esp32s3() noexcept
 {
-    auto& led = gpioConfigs_[static_cast<std::size_t>(gpio::Id::LedYellow)];
-    led.isEnabled = true;
-    led.pin = 8U;
-    led.mode = gpio::Mode::Output;
+    auto& ledYellow = gpioConfigs_[static_cast<std::size_t>(gpio::Id::LedYellow)];
+    ledYellow.isEnabled = true;
+    ledYellow.pin = 8U;
+    ledYellow.mode = gpio::Mode::Output;
 
-    led = gpioConfigs_[static_cast<std::size_t>(gpio::Id::LedBlue)];
-    led.isEnabled = true;
-    led.pin = 9U;
-    led.mode = gpio::Mode::Output;
+    auto& ledBlue = gpioConfigs_[static_cast<std::size_t>(gpio::Id::LedBlue)];
+    ledBlue.isEnabled = true;
+    ledBlue.pin = 9U;
+    ledBlue.mode = gpio::Mode::Output;
 
     auto& blinkTimer = timerConfigs_[static_cast<std::size_t>(timer::Id::Blink)];
     blinkTimer.isEnabled = true;
@@ -33,7 +35,16 @@ Esp32s3::Esp32s3() noexcept
     temperatureAdc.isEnabled = true;
     temperatureAdc.pin = 11U;
 
-    //serialConfig_.baudRate = 115200U;
+    uart_config_t config = {};
+    config.baud_rate = 115200U;
+    config.data_bits = UART_DATA_8_BITS;
+    config.parity = UART_PARITY_DISABLE;
+    config.stop_bits = UART_STOP_BITS_1;
+    config.flow_ctrl = UART_HW_FLOWCTRL_DISABLE;
+
+    serialConfig_.uart_config = config;
+    serialConfig_.uart_port = UART_NUM_0;
+    serialConfig_.baudRate = 115200U;
 
 }
 

@@ -45,7 +45,7 @@ public:
         }
 
         const auto& wifiLedSettings = config.getGpio(driver::gpio::Id::LedBlue);
-        if (ledSettings.isEnabled)
+        if (wifiLedSettings.isEnabled)
         {
             const auto index = to_idx(driver::gpio::Id::LedBlue);
             gpios_[index] = factory.gpio(wifiLedSettings);
@@ -72,8 +72,8 @@ public:
             adcs_[index] = factory.adc(temperatureAdcSettings);
         }
 
-        // const auto& serialSettings = config.getSerial();
-        // serial_ = factory.serial(serialSettings);
+        const auto& serialSettings = config.getSerial();
+        serial_ = factory.serial(serialSettings);
 
         if (nullptr != adcs_[to_idx(driver::adc::Id::Temperature)])
         {
