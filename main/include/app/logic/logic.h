@@ -133,7 +133,47 @@ public:
 // -----------------------------------------------------------------------------
     Command parseCommand(const char* input) noexcept override
     {
-        return Command{};
+        Command newCMD{};
+
+        /* Tokenize the string on whitespace */
+        char buffer[256];
+        std::strncpy(buffer, input, sizeof(buffer) - 1);
+        buffer[sizeof(buffer) -1] = '\0';
+
+        const std::uint8_t MAX_TOKENS = 5;
+        char* tokens[MAX_TOKENS];
+        std::uint8_t token_count = 0;
+        
+        char* token = std::strtok(buffer, " ");
+        
+        while(nullptr != token && MAX_TOKENS != token_count)
+        {
+            tokens[token_count++] = token;
+            token = std::strtok(nullptr, " ");
+        }
+
+        if (0 == token_count)
+        {
+            newCMD.command = Commands::UNKNOWN;
+        }
+
+        for (std::size_t i = 0; i < CommandCount; ++i)
+        {
+            if (0 == std::strcmp(tokens[0], commandTable[i].str))
+            {
+                newCMD.command = commandTable[i].cmd;
+                break;
+            }
+        }
+
+        for (std::size_t j = 1; j < token_count && newCMD.argCount < 2; j++)
+        {
+            std::strncpy(newCMD.args[newCMD.argCount], tokens[j], sizeof(newCMD.args[0]) - 1);
+            newCMD.args[newCMD.argCount][sizeof(newCMD.args[0]) - 1] = '\0';
+            newCMD.argCount++;
+        }
+        
+        return newCMD;
     }
 // -----------------------------------------------------------------------------
     void runCommand(Command cmd) noexcept override

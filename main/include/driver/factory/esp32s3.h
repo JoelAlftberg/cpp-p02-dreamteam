@@ -10,6 +10,7 @@
 #include "driver/gpio/esp32s3.h"
 #include "driver/tempsensor/esp32s3.h"
 #include "driver/timer/esp32s3.h"
+#include "driver/mqtt/esp32s3.h"
 
 namespace driver::factory
 {
@@ -43,6 +44,7 @@ public:
     {
         return std::make_unique<tempsensor::Esp32s3>();
     }
+
 
 };
 
