@@ -9,7 +9,7 @@ namespace driver::timer
 struct Settings
 {
     bool isEnabled = false;
-    std::uint32_t timeout_ms = 1000;
+    std::uint32_t timeout_ms = 1000U;
 };
 
 class Interface
@@ -55,8 +55,19 @@ public:
      * @note This operation is only performed if the timer is running.
      */
     virtual void tick() noexcept = 0;
-    
 
+    /**
+     * @brief Set the timeout of the timer
+     * 
+     * @param[in] timeout_ms Timeout to set in milliseconds
+     */
+    virtual void setTimeout(std::uint32_t timeout_ms) noexcept = 0;
 
+    /**
+     * @brief Get the timeout of the timer
+     * 
+     * @return The timeout im milliseconds
+     */
+    virtual std::uint32_t getTimeout() noexcept = 0;
 };
 } // Namespace timer

@@ -11,6 +11,7 @@ namespace driver
     namespace timer { class Interface; struct Settings; }
     namespace tempsensor { class Interface; struct Settings;}
     namespace config { class Interface; struct Settings;}
+    namespace mqtt { class Interface; struct Settings; }
 } // namespace driver
 
 namespace driver::factory
