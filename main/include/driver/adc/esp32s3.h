@@ -1,10 +1,20 @@
 #pragma once
+
 #include <cstdint>
+
 #include "driver/adc/interface.h"
 #include "esp_adc/adc_oneshot.h"
 
-namespace driver::adc{
-class Esp32s3 final : public Interface {
+namespace driver::adc
+{
+
+struct Esp32s3Settings final : public Settings
+{
+    std::uint8_t pin;
+};
+
+class Esp32s3 final : public Interface 
+{
 public:
     /**
      * @brief Constructor.

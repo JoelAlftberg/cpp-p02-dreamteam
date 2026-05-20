@@ -6,9 +6,16 @@
 #include "driver/temperature_sensor.h"
 
 
-namespace driver::tempsensor{
+namespace driver::tempsensor
+{
 
-class Esp32s3 final : public Interface{
+struct Esp32s3Settings final : public Settings
+{
+
+};                     
+
+class Esp32s3 final : public Interface
+{
 public:
     /**
      * @brief Constructor.

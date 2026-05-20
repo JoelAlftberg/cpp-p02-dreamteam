@@ -1,9 +1,19 @@
 #pragma once
 
+#include "driver/factory/interface.h"
+
 #include <cstdint>
 
-namespace driver::adc{
-class Interface{
+namespace driver::adc
+{
+
+struct Settings
+{
+    bool isEnabled = false;
+};
+
+class Interface
+{
 public: 
     virtual ~Interface() noexcept = default;
     virtual bool isInitialized() const noexcept = 0;

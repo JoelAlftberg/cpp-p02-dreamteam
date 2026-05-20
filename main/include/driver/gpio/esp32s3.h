@@ -9,6 +9,11 @@
 namespace driver::gpio
 {
 
+struct Esp32s3Settings final : public Settings
+{
+    std::uint8_t pin;
+    Mode mode;
+};                            
 
 class Esp32s3 final : public Interface
 {

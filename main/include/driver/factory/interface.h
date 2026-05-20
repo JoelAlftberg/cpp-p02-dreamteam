@@ -3,16 +3,14 @@
 #include <cstdint>
 #include <memory>
 
-// Fördeklarationer av alla drivargränssnitt, så att vi kan returnera pekare till dem i 
-// fabriksgränssnittet utan att behöva inkludera deras fulla definitioner här.
 namespace driver
 {
-    namespace adc { class Interface; }
-    namespace gpio { class Interface; }
-    namespace serial { class Interface; }
-    namespace timer { class Interface; }
-    namespace tempsensor { class Interface; }
-    namespace config { class Interface; }
+    namespace adc { class Interface; struct Settings; }
+    namespace gpio { class Interface; struct Settings; }
+    namespace serial { class Interface; struct Settings; }
+    namespace timer { class Interface; struct Settings; }
+    namespace tempsensor { class Interface; struct Settings;}
+    namespace config { class Interface; struct Settings;}
 } // namespace driver
 
 namespace driver::factory
@@ -24,17 +22,18 @@ public:
 
     virtual ~Interface() noexcept = default;
 
-    virtual std::unique_ptr<adc::Interface> adc() noexcept = 0;
+    virtual std::unique_ptr<adc::Interface> adc(const adc::Settings& settings) const noexcept = 0;
 
-    virtual std::unique_ptr<gpio::Interface> gpio() noexcept = 0;
+    virtual std::unique_ptr<gpio::Interface> gpio(const gpio::Settings& settings) const noexcept = 0;
 
-    virtual std::unique_ptr<serial::Interface> serial() noexcept = 0;
+    virtual std::unique_ptr<serial::Interface> serial(const serial::Settings& settings) noexcept = 0;
 
-    virtual std::unique_ptr<timer::Interface> timer() noexcept = 0;
+    virtual std::unique_ptr<timer::Interface> timer(const timer::Settings& settings) const noexcept = 0;
 
-    virtual std::unique_ptr<tempsensor::Interface> tempsensor() noexcept = 0;
+    virtual std::unique_ptr<tempsensor::Interface> tempsensor(
+            const tempsensor::Settings& settings
+            ) noexcept = 0;
 
-    virtual std::unique_ptr<config::Interface> config() noexcept = 0;
 };
 
 }

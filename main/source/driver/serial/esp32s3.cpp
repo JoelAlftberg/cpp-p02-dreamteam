@@ -7,9 +7,10 @@
 namespace driver::serial
 {
 // -----------------------------------------------------------------------------
-Esp32s3::Esp32s3(uart_config_t* config, uart_port_t port) noexcept
+Esp32s3::Esp32s3(uart_config_t* config, uart_port_t port, std::uint32_t baudRate) noexcept
     : config_{config}
     , port_{port}
+    , baudRate_{baudRate}
 {}
 
 // -----------------------------------------------------------------------------
@@ -18,6 +19,8 @@ bool Esp32s3::initialize() noexcept
     esp_err_t initStatus{uart_driver_install(port_, RxBufSize, TxBufSize, 0U, nullptr, 0U)};
     if (ESP_OK != initStatus) { return false; }
     esp_err_t configStatus = uart_param_config(port_, config_);
+
+    setBaudRate(baudRate_);
     
     initialized_ = (ESP_OK == configStatus  ? true : false);
     return initialized_;
@@ -101,8 +104,8 @@ std::size_t Esp32s3::getAvailableData() const noexcept
 // -----------------------------------------------------------------------------
 void Esp32s3::setBaudRate(std::uint32_t baudRate) noexcept
 {
-    config_->baud_rate = baudRate;
-    uart_set_baudrate(port_ , config_->baud_rate);
+    baudRate_ = baudRate;
+    uart_set_baudrate(port_ , baudRate_);
 }
 
-} // namespace driver::serial
+} // namespace driver::seria

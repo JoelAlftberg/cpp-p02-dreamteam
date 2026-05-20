@@ -1,12 +1,19 @@
 #pragma once
+
 #include <cstdint>
 
 #include "driver/serial/interface.h"
 #include "driver/uart.h"
 
-
 namespace driver::serial
 {
+
+struct Esp32s3Settings : public Settings
+{
+    uart_config_t   uart_config;
+    uart_port_t     uart_port;
+    std::uint32_t   baudRate;
+};
 
 static constexpr std::size_t RxBufSize{256U};
 static constexpr std::size_t TxBufSize{256U};
@@ -16,7 +23,7 @@ class Esp32s3 final : public Interface
 
 public:
 
-    explicit Esp32s3(uart_config_t* config, uart_port_t port) noexcept;
+    explicit Esp32s3(uart_config_t* config, uart_port_t port, std::uint32_t baudRate) noexcept;
 
     ~Esp32s3() noexcept;
     
@@ -39,9 +46,9 @@ public:
 private:
     uart_config_t* config_{};
     uart_port_t port_;
+    std::uint32_t baudRate_;
     std::uint8_t rxBuffer_[RxBufSize]{};
     bool initialized_;
     
 };
-
 }

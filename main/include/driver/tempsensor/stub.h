@@ -4,6 +4,12 @@
 #include "driver/tempsensor/interface.h"
 
 namespace driver::tempsensor{
+
+struct StubSettings final : public Settings 
+{
+
+};                     
+
 class Stub final : public Interface {
 public:
     Stub() noexcept
@@ -19,7 +25,7 @@ public:
     }
    
     std::int16_t readCelsius() const noexcept override{
-        if (!started) return 0;
+        if (!status) return 0;
         return myTemp;
 
     }

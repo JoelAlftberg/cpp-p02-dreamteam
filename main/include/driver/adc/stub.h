@@ -1,10 +1,20 @@
 #pragma once
-#include <cstdint>
-#include <cstdio>
+
 #include "driver/adc/interface.h"
 
-namespace driver::adc{
-class Stub final : public Interface {
+#include <cstdint>
+#include <cstdio>
+
+namespace driver::adc
+{
+
+struct StubSettings final : public Settings
+{
+
+};
+
+class Stub final : public Interface 
+{
 public: 
     /**
  * @brief Constructor.

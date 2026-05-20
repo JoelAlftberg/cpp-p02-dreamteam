@@ -5,6 +5,11 @@
 namespace driver::serial
 {
 
+struct Settings
+{
+
+};
+
 class Interface
 {
 
