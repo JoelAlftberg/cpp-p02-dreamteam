@@ -1,6 +1,7 @@
 #include "driver/factory/stub.h"
 #include "driver/config/stub.h"
 #include "app/logic/logic.h"
+#include "driver/wifi/wifi.h"
 
 #include "driver/uart.h"
 #include "esp_log.h"
@@ -14,8 +15,11 @@
 #include <string>
 #include <future>
 
+
 extern "C" void app_main(void)
-{
+{   
+    driver::wifi::Esp32s3 wifi("goteborgfree", "");
+    wifi.connect();
     auto config = std::make_unique<driver::config::Stub>(); 
     auto factory = std::make_unique<driver::factory::Stub>();
 
