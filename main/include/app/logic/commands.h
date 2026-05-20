@@ -28,6 +28,8 @@ CommandMapping commandTable[] =
     {"led", Commands::Led},
     {"blink", Commands::Blink},
     {"period", Commands::Period},
+    {"temp", Commands::Temp},
+    {"status", Commands::Status}
 };
 
 constexpr std::size_t CommandCount = sizeof(commandTable) / sizeof(commandTable[0]);

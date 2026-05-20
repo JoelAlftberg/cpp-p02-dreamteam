@@ -50,6 +50,16 @@ void Esp32s3::tick() noexcept
     if (myRunning) { updateCounter(); }
 }
 
+void Esp32s3::setTimeout(std::uint32_t timeout_ms) noexcept
+{
+    myTimeout_us = timeout_ms * 1000U;
+}
+
+std::uint32_t Esp32s3::getTimeout() noexcept
+{
+    return myTimeout_us / 1000;
+}    
+
 void Esp32s3::updateCounter() noexcept
 {
     const int64_t currentTime_us = esp_timer_get_time();
