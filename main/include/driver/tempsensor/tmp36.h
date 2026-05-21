@@ -11,7 +11,7 @@ namespace driver::tempsensor
 
 struct TMP36Settings final : public Settings
 {
-    adc::Id adc;
+
 };
 
 class Tmp36 final : public Interface 

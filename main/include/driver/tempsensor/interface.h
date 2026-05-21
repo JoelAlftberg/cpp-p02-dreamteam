@@ -1,11 +1,14 @@
 #pragma once
+
 #include <cstdint>
+
+#include "driver/adc/interface.h"
 
 namespace driver::tempsensor{
 
 struct Settings
 {
-
+    driver::adc::Interface* adc;
 };
 
 class Interface

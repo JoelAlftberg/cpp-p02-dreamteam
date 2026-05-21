@@ -29,11 +29,9 @@ public:
 
     void delay_ms(std::uint16_t ms) noexcept override;
 
-
     const adc::Settings& getADC(adc::Id id) const noexcept override;
 
     const gpio::Settings& getGpio(gpio::Id id) const noexcept override;
-
 
     const timer::Settings& getTimer(timer::Id id) const noexcept override; 
 

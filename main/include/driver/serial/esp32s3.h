@@ -23,7 +23,7 @@ class Esp32s3 final : public Interface
 
 public:
 
-    explicit Esp32s3(uart_config_t* config, uart_port_t port, std::uint32_t baudRate) noexcept;
+    explicit Esp32s3(uart_config_t config, uart_port_t port, std::uint32_t baudRate) noexcept;
 
     ~Esp32s3() noexcept;
     
@@ -44,7 +44,7 @@ public:
     void setBaudRate(std::uint32_t baudRate) noexcept; 
 
 private:
-    uart_config_t* config_{};
+    uart_config_t config_{};
     uart_port_t port_;
     std::uint32_t baudRate_;
     std::uint8_t rxBuffer_[RxBufSize]{};

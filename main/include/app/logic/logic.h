@@ -11,10 +11,16 @@
 #include "driver/config/interface.h"
 #include "driver/factory/interface.h"
 
+#include "driver/adc/interface.h"
+#include "driver/gpio/interface.h"
+#include "driver/timer/interface.h"
+#include "driver/serial/interface.h"
+#include "driver/tempsensor/interface.h"
+
 #include <array>
 #include <cstddef>
+#include <cstring>
 #include <memory>
-#include <string.h>
 
 using driver::utils::to_idx;
 
@@ -38,30 +44,50 @@ public:
             gpios_[index] = factory.gpio(ledSettings);
         }
 
+        const auto& wifiLedSettings = config.getGpio(driver::gpio::Id::LedBlue);
+        if (wifiLedSettings.isEnabled)
+        {
+            const auto index = to_idx(driver::gpio::Id::LedBlue);
+            gpios_[index] = factory.gpio(wifiLedSettings);
+        }
+
         const auto& blinkTimerSettings = config.getTimer(driver::timer::Id::Blink);
-        if (blinkTimerSettings.isEnabled) {
+        if (blinkTimerSettings.isEnabled)
+        {
             const auto index = to_idx(driver::timer::Id::Blink);
             timers_[index] = factory.timer(blinkTimerSettings);
         }
 
-        const auto& tempTimerSettings = config.getTimer(driver::timer::Id::Temperature);
-        if (tempTimerSettings.isEnabled)
+        const auto& wifiLedTimerSettings = config.getTimer(driver::timer::Id::WifiLed);
+        if (wifiLedTimerSettings.isEnabled)
         {
-            const auto index = to_idx(driver::timer::Id::Temperature);
-            timers_[index] = factory.timer(tempTimerSettings);
+            const auto index = to_idx(driver::timer::Id::WifiLed);
+            timers_[index] = factory.timer(wifiLedTimerSettings);
+        }
+
+        const auto& temperatureAdcSettings = config.getADC(driver::adc::Id::Temperature);
+        if (temperatureAdcSettings.isEnabled)
+        {
+            const auto index = to_idx(driver::adc::Id::Temperature);
+            adcs_[index] = factory.adc(temperatureAdcSettings);
         }
 
         const auto& serialSettings = config.getSerial();
         serial_ = factory.serial(serialSettings);
 
-        const auto& tempsensorSettings = config.getTempsensor();
-        tempsensor_ = factory.tempsensor(tempsensorSettings);
+        if (nullptr != adcs_[to_idx(driver::adc::Id::Temperature)])
+        {
+            driver::tempsensor::Settings tempsensorSettings{adcs_[to_idx(driver::adc::Id::Temperature)].get()};
+            tempsensor_ = factory.tempsensor(tempsensorSettings);
+        }
         
     }
 
 // -----------------------------------------------------------------------------
     void initialize() noexcept 
     {
+        auto& wifiLedTimer = timers_[to_idx(driver::timer::Id::WifiLed)];
+        wifiLedTimer->start();
         serial_->initialize();
         tempsensor_->start();
     }
@@ -70,13 +96,21 @@ public:
     void run() noexcept override
     { 
         auto& blinkTimer = timers_[to_idx(driver::timer::Id::Blink)]; 
+        auto& wifiLedTimer = timers_[to_idx(driver::timer::Id::WifiLed)];
         auto& ledYellow = gpios_[to_idx(driver::gpio::Id::LedYellow)];
+        auto& ledBlue = gpios_[to_idx(driver::gpio::Id::LedBlue)];
 
         blinkTimer->tick();
+        wifiLedTimer->tick();
 
-        if(blinkTimer->hasTimedOut())
+        if (blinkTimer->hasTimedOut())
         {
             ledYellow->toggle();
+        }
+
+        if (wifiLedTimer->hasTimedOut())
+        {
+            ledBlue->toggle();
         }
 
         char incomingByte;

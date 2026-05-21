@@ -3,7 +3,6 @@
 #include <cstdint>
 #include <cstring>
 #include <iostream>
-#include <strings.h>
 
 #include "driver/serial/interface.h"
 
