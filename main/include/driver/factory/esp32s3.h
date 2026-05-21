@@ -10,6 +10,7 @@
 #include "driver/gpio/esp32s3.h"
 #include "driver/tempsensor/tmp36.h"
 #include "driver/timer/esp32s3.h"
+#include "driver/mqtt/esp32s3.h"
 
 namespace driver::factory
 {
@@ -48,6 +49,7 @@ public:
         return std::make_unique<tempsensor::Tmp36>(*settings.adc);
     }
     
+
 
 
 };

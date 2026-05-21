@@ -29,6 +29,11 @@ public:
     std::int16_t readCelsius() const noexcept override;
     void start() noexcept override;
     void stop() noexcept override;
+    Esp32s3()                         = delete;
+    Esp32s3(const Esp32s3&)           = delete;
+    Esp32s3(Esp32s3&&)                = delete;
+    Esp32s3 operator=(const Esp32s3&) = delete;
+    Esp32s3& operator=(Esp32s3&&)     = delete;
 
     Esp32s3(const Esp32s3&)           = delete;
     Esp32s3(Esp32s3&&)                = delete;
