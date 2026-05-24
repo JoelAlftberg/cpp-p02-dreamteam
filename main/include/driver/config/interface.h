@@ -17,6 +17,8 @@ namespace driver
     namespace timer { class Interface; struct Settings; }
     namespace tempsensor { class Interface; struct Settings;}
     namespace config { class Interface; struct Settings;}
+    namespace wifi { class Interface; struct Settings;}
+    namespace mqtt { class Interface; struct Settings;}
 } // namespace driver
 
 namespace driver::config
@@ -39,5 +41,9 @@ public:
     virtual const driver::serial::Settings& getSerial() const noexcept = 0;
 
     virtual const driver::tempsensor::Settings& getTempsensor() const noexcept = 0;
+
+    virtual const driver::wifi::Settings& getWifi() const noexcept = 0;
+
+    virtual const driver::mqtt::Settings& getMQTT() const noexcept = 0;
 };
 } // namespace driver::config

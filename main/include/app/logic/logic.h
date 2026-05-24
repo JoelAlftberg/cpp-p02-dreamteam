@@ -16,6 +16,8 @@
 #include "driver/timer/interface.h"
 #include "driver/serial/interface.h"
 #include "driver/tempsensor/interface.h"
+#include "driver/wifi/interface.h"
+#include "driver/mqtt/interface.h"
 
 #include <array>
 #include <cstddef>
@@ -81,12 +83,18 @@ public:
             tempsensor_ = factory.tempsensor(tempsensorSettings);
         }
         
+        const auto& wifiSettings = config.getWifi();
+        wifi_ = factory.wifi(wifiSettings);        
+        
+        const auto& mqttSettings = config.getMQTT();
+        mqtt_ = factory.mqtt(mqttSettings);
     }
 
 // -----------------------------------------------------------------------------
     void initialize() noexcept 
     {
         auto& wifiLedTimer = timers_[to_idx(driver::timer::Id::WifiLed)];
+        wifi_->connect();
         wifiLedTimer->start();
         serial_->initialize();
         tempsensor_->start();
@@ -108,7 +116,7 @@ public:
             ledYellow->toggle();
         }
 
-        if (wifiLedTimer->hasTimedOut())
+        if (wifi_->isConnected() && wifiLedTimer->hasTimedOut())
         {
             ledBlue->toggle();
         }
@@ -123,7 +131,6 @@ public:
                 
                 if (bytesWritten >= static_cast<int>(sizeof(printBuffer)))
                 {
-                    /* Truncate output string when it's too long */
                     std::memcpy(&printBuffer[sizeof(printBuffer) - 5], "...\n", 5);
                 }
                 
@@ -300,23 +307,29 @@ public:
 
 private:
 
-    /** ADCs **/
+    /* ADCs */
     std::array<std::unique_ptr<driver::adc::Interface>,
         static_cast<std::size_t>(driver::adc::Id::COUNT)> adcs_;
 
-    /** GPIO pins **/
+    /* GPIO pins */
     std::array<std::unique_ptr<driver::gpio::Interface>,
         static_cast<std::size_t>(driver::gpio::Id::COUNT)> gpios_;
 
-    /** Timers **/
+    /* Timers */
     std::array<std::unique_ptr<driver::timer::Interface>,
         static_cast<std::size_t>(driver::timer::Id::COUNT)> timers_;
 
-    /** Serial device used to read/write messages and commands **/
+    /* Serial device used to read/write messages and commands */
     std::unique_ptr<driver::serial::Interface> serial_;
 
-    /** Temperature sensor **/
+    /* Temperature sensor */
     std::unique_ptr<driver::tempsensor::Interface> tempsensor_;
+
+    /* Wifi */
+    std::unique_ptr<driver::wifi::Interface> wifi_;
+
+    /* Mqtt */
+    std::unique_ptr<driver::mqtt::Interface> mqtt_;
 
     /* Used for serial input */
     char messageAccumulator_[80U];

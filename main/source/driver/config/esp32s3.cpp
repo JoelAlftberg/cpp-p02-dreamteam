@@ -13,6 +13,9 @@ namespace driver::config
 
 Esp32s3::Esp32s3() noexcept
 {
+    wifiConfig_.ssid = "goteborgfree";
+    wifiConfig_.password = "";
+
     auto& ledYellow = gpioConfigs_[static_cast<std::size_t>(gpio::Id::LedYellow)];
     ledYellow.isEnabled = true;
     ledYellow.pin = 8U;
@@ -76,6 +79,11 @@ const serial::Settings& Esp32s3::getSerial() const noexcept
 const tempsensor::Settings& Esp32s3::getTempsensor() const noexcept 
 {
     return tempsensorConfig_;
+}
+
+const wifi::Settings& Esp32s3::getWifi() const noexcept
+{
+    return wifiConfig_;
 }
 
 } // namespace driver::config

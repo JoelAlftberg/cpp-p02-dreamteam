@@ -7,6 +7,12 @@
 
 namespace driver::mqtt
 {
+
+struct Settings
+{
+
+};
+
 /**
  * @brief MQTT driver interface.
  */

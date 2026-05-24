@@ -10,6 +10,12 @@
 
 namespace driver::mqtt
 {
+
+struct Esp32s3Settings : public Settings
+{
+
+};
+
 /**
  * @brief MQTT driver interface.
  */

@@ -1,4 +1,4 @@
-#include "driver/wifi/wifi.h"
+#include "driver/wifi/esp32s3.h"
 
 #include "esp_wifi.h"
 #include "esp_netif.h"
