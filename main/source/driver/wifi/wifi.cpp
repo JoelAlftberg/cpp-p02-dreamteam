@@ -2,6 +2,8 @@
 
 #include "esp_wifi.h"
 #include "esp_netif.h"
+#include "esp_event.h"
+#include "nvs_flash.h"
 #include <string.h>
 #include <unistd.h>
 
@@ -12,7 +14,16 @@ Esp32s3::Esp32s3(const char* ssid, const char* password) noexcept
     , myPassword{password}
     , connected{false}
 {
+    esp_err_t ret = nvs_flash_init();
+    if (ret == ESP_ERR_NVS_NO_FREE_PAGES || ret == ESP_ERR_NVS_NEW_VERSION_FOUND) {
+        (void)nvs_flash_erase();
+        (void)nvs_flash_init();
+    }
+
     esp_netif_init();
+
+    esp_event_loop_create_default();
+
     esp_netif_create_default_wifi_sta();
 
     wifi_init_config_t cfg = WIFI_INIT_CONFIG_DEFAULT();
