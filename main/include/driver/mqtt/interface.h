@@ -22,7 +22,9 @@ public:
     /**
      * @brief Destructor.
      */
-    virtual ~Interface() noexcept = 0;
+    virtual ~Interface() noexcept = default;
+
+    virtual void startClient() noexcept = 0;
 
     /**
      * @brief Subscribe to broker.

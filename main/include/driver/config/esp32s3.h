@@ -6,8 +6,6 @@
 #include <cstdint>
 #include <array>
 
-#include "driver/mqtt/esp32s3.h"
-#include "driver/mqtt/interface.h"
 #include "freertos/FreeRTOS.h"
 #include "freertos/task.h"
 
@@ -17,6 +15,7 @@
 #include "driver/serial/esp32s3.h"
 #include "driver/tempsensor/esp32s3.h"
 #include "driver/wifi/esp32s3.h"
+#include "driver/mqtt/esp32s3.h"
 
 #include "driver/config/interface.h"
 
@@ -46,7 +45,14 @@ public:
 
     const tempsensor::Settings& getTempsensor() const noexcept override;
 
-    const wifi::Settings& getWifi() const noexcept;
+    const wifi::Settings& getWifi() const noexcept override;
+
+    const mqtt::Settings& getMQTT() const noexcept override;
+
+    Esp32s3(const Esp32s3&)           = delete;
+    Esp32s3(Esp32s3&&)                = delete;
+    Esp32s3 operator=(const Esp32s3&) = delete;
+    Esp32s3& operator=(Esp32s3&&)     = delete;
 
 private:
     std::array<adc::Esp32s3Settings, static_cast<std::size_t>(adc::Id::COUNT)> adcConfigs_; 

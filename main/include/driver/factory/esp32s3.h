@@ -11,7 +11,7 @@
 #include "driver/tempsensor/tmp36.h"
 #include "driver/timer/esp32s3.h"
 #include "driver/mqtt/esp32s3.h"
-#include "driver/wifi/wifi.h"
+#include "driver/wifi/esp32s3.h"
 
 namespace driver::factory
 {
@@ -49,15 +49,15 @@ public:
         return std::make_unique<tempsensor::Tmp36>(*settings.adc);
     }
 
-    std::unique_ptr<wifi::Interface> wifi(const wifi::Settings& settings) noexcept override
+    std::unique_ptr<wifi::Interface> wifi(const wifi::Settings& settings) const noexcept override
     {
         const auto& wifiSettings = static_cast<const wifi::Esp32s3Settings&>(settings);
         return std::make_unique<wifi::Esp32s3>(wifiSettings.ssid, wifiSettings.password);
     }
 
-    std::unique_ptr<mqtt::Interface> mqtt(const mqtt::Settings& settings) noexcept override
+    std::unique_ptr<mqtt::Interface> mqtt(const mqtt::Settings& settings) const noexcept override
     {
-        return std::make_unique<mqtt::Esp32s3>();
+        return std::make_unique<mqtt::Esp32s3>(nullptr);
     }
 };
 

@@ -5,7 +5,8 @@
 
 #include <cstdint>
 #include "driver/mqtt/interface.h"
-#include "driver/mqtt.h"
+#include "esp_event.h"
+//#include "driver/mqtt.h"
 #include "mqtt_client.h"
 
 namespace driver::mqtt
@@ -24,12 +25,15 @@ class Esp32s3 final : public Interface
 public:
     /** @brief Constructor. */
 
-    explicit Esp32s3() noexcept;
+    explicit Esp32s3(const char* url) noexcept;
 
     /**
      * @brief Destructor.
      */
-    ~Esp32s3() noexcept override = default;
+    ~Esp32s3() noexcept override;
+
+
+    void startClient() noexcept override;
 
     /**
      * @brief Subscribe to broker.
@@ -70,7 +74,6 @@ public:
      * @return Number of received bytes, or 0 on failure.
      */
     std::uint8_t receive(char* buf, std::uint8_t bufLen) noexcept override;
-    Esp32s3()                         = delete;
     Esp32s3(const Esp32s3&)           = delete;
     Esp32s3(Esp32s3&&)                = delete;
     Esp32s3 operator=(const Esp32s3&) = delete;
@@ -82,7 +85,7 @@ private:
                                  int32_t event_id, void* event_data);
     void storeReceivedData(const char* data, std::uint8_t dataLen) noexcept;
 
-    constexpr uint8_t MaxBufLen{128U};
+    static constexpr uint8_t MaxBufLen{128U};
     char myRxBuf[MaxBufLen];
     const char* myUrl;
     std::uint8_t myRxBufLen;

@@ -1,5 +1,7 @@
 #pragma once 
 
+#include "esp_log.h"
+
 #include "app/logic/interface.h"
 
 #include "driver/common/utils.h"
@@ -95,9 +97,11 @@ public:
     {
         auto& wifiLedTimer = timers_[to_idx(driver::timer::Id::WifiLed)];
         wifi_->connect();
+        mqtt_->startClient();
         wifiLedTimer->start();
         serial_->initialize();
         tempsensor_->start();
+        
     }
  
 // -----------------------------------------------------------------------------
@@ -155,6 +159,15 @@ public:
                 messageAccumulator_[messageLength_++] = incomingByte;
                 messageAccumulator_[messageLength_] = '\0';
             }
+        }
+
+        char mqttBuf[255]{};
+
+        std::size_t bytesRead = mqtt_->receive(mqttBuf, sizeof(mqttBuf));
+        if (bytesRead > 0)
+        {
+            Command cmd = parseCommand(mqttBuf);
+            runCommand(cmd);
         }
     }
 // -----------------------------------------------------------------------------

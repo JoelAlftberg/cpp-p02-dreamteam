@@ -86,4 +86,10 @@ const wifi::Settings& Esp32s3::getWifi() const noexcept
     return wifiConfig_;
 }
 
+const mqtt::Settings& Esp32s3::getMQTT() const noexcept
+{
+    return mqttConfig_;
+}
+
+
 } // namespace driver::config
