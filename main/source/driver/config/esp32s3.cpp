@@ -34,9 +34,13 @@ Esp32s3::Esp32s3() noexcept
     wifiLedTimer.isEnabled = true;
     wifiLedTimer.timeout_ms = 1000U;    
 
+    auto& temperatureTimerSettings = timerConfigs_[static_cast<std::size_t>(timer::Id::Temperature)];
+    temperatureTimerSettings.isEnabled = true;
+    temperatureTimerSettings.timeout_ms = 1000U;
+
     auto& temperatureAdc = adcConfigs_[static_cast<std::size_t>(adc::Id::Temperature)];
     temperatureAdc.isEnabled = true;
-    temperatureAdc.pin = 11U;
+    temperatureAdc.pin = 4U;
 
     uart_config_t config = {};
     config.baud_rate = 115200U;

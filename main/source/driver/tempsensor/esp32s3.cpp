@@ -3,7 +3,7 @@
 #include "driver/tempsensor/esp32s3.h"
 #include "driver/temperature_sensor.h"
 
-
+#inclue "esp_log.h"
 
 namespace driver::tempsensor {
 
