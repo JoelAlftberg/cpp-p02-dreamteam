@@ -10,24 +10,22 @@
 namespace driver::mqtt{
 namespace
 {
-constexpr const char* Tag{"MQTT"};
-constexpr const char* DefaultUrl{"mqtt://mqtt.eclipseprojects.io"};
+static constexpr const char* Tag{"MQTT"};
+static constexpr const char* DefaultUrl{"mqtt://broker.hivemq.com"};
 } // namespace
 
 // -------------------------------------------------------------------
 Esp32s3::Esp32s3(const char* url) noexcept
-    : myBuf{}
+    : myRxBuf{}
     , myUrl{nullptr == url ? DefaultUrl : url}
-    , myBufLen{}
+    , myRxBufLen{}
     , myClient{nullptr}
     {
         // Create MQTT configuration and client, register event handler and start client.
-        const esp_mqtt_client_config_t mqttConfig{
-            .broker.address.uri = myUrl
-        };
+        esp_mqtt_client_config_t mqttConfig{};
+        mqttConfig.broker.address.uri = myUrl;
         myClient = esp_mqtt_client_init(&mqttConfig);
-        esp_mqtt_client_register_event(myClient, ESP_EVENT_ANY_ID, mqttEventHandler, myClient);
-        esp_mqtt_client_start(myClient);
+
     }
 
 // -------------------------------------------------------------------
@@ -39,16 +37,23 @@ Esp32s3::~Esp32s3() noexcept
         esp_mqtt_client_destroy(myClient);
     }
 }
+// -------------------------------------------------------------------
+void Esp32s3::startClient() noexcept
+{
+    esp_mqtt_client_register_event(myClient, MQTT_EVENT_ANY, mqttEventHandler, this);
+    esp_mqtt_client_start(myClient);
+}
 
 // -------------------------------------------------------------------
 bool Esp32s3::subscribe(const char* broker) noexcept
 {
     constexpr int qos{1};
     // Check broker, return false if invalid.
-    if(nullptr == broker) { return false; }
+    if((nullptr == broker)) { return false; }
 
     // Subscribe to the broker with QoS 1.
     esp_mqtt_client_subscribe(myClient, broker, qos);
+    ESP_LOGI(Tag, "Subscription successful");
     return true;
 }
 
@@ -70,7 +75,7 @@ bool Esp32s3::publish(const char* broker, const std::uint8_t* buf, std::uint8_t 
     if ((nullptr == buf) || (0U == bufLen) || (nullptr == broker)) { return false; }
 
     // Publish the buffer to the broker with QoS 0 and no retain.
-    esp_mqtt_client_publish(myClient, broker, buf, bufLen, 0, 0);
+    esp_mqtt_client_publish(myClient, broker, reinterpret_cast<const char*>(buf), bufLen, 0, 0);
     return true;
 }
 
@@ -98,17 +103,20 @@ std::uint8_t Esp32s3::receive(char* buf, std::uint8_t bufLen) noexcept
 void Esp32s3::mqttEventHandler(void* handler_args, esp_event_base_t base,
          int32_t event_id, void* event_data)
 {
-    auto instance = static_cast<Esp32s3*>(handler_args);
+    auto instance = reinterpret_cast<Esp32s3*>(handler_args);
     auto event    = static_cast<esp_mqtt_event_handle_t>(event_data);
 
     // Check instance and event, return if invalid.
     if ((nullptr == instance) || (nullptr == event)) { return; }
 
-     switch (event->event_id)
+    ESP_LOGI(Tag, "Event triggered. Event ID: %d", event->event_id);
+    
+    switch (event->event_id)
     {
         case MQTT_EVENT_CONNECTED:
         {
             ESP_LOGI(Tag, "Connected to broker");
+            instance->subscribe("dreamteam-p02/#");
             break;
         }
 

@@ -4,4 +4,9 @@
 
 ---
 
+# Building
 
+To successfully build the binary the mqtt dependency is required.
+```bash
+idf.py add-dependency "espressif/mqtt"
+```

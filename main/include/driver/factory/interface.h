@@ -1,5 +1,7 @@
 #pragma once
 
+#include "driver/mqtt/interface.h"
+#include "driver/wifi/interface.h"
 #include <cstdint>
 #include <memory>
 
@@ -11,6 +13,7 @@ namespace driver
     namespace timer { class Interface; struct Settings; }
     namespace tempsensor { class Interface; struct Settings;}
     namespace config { class Interface; struct Settings;}
+    namespace wifi { class Interface; struct Settings;}
     namespace mqtt { class Interface; struct Settings; }
 } // namespace driver
 
@@ -34,7 +37,10 @@ public:
     virtual std::unique_ptr<tempsensor::Interface> tempsensor(
             const tempsensor::Settings& settings
             ) noexcept = 0;
+    
+    virtual std::unique_ptr<wifi::Interface> wifi(const wifi::Settings& settings) const noexcept = 0;
 
+    virtual std::unique_ptr<mqtt::Interface> mqtt(const mqtt::Settings& settings) const noexcept = 0;
 };
 
 }

@@ -37,3 +37,7 @@
 
 # Ignore SDK config files.
 *sdkconfig*
+
+dependencies.lock
+main/idf_component.yml
+managed_components/*
