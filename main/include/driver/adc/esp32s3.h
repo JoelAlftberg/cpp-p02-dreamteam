@@ -39,8 +39,10 @@ public:
     
 
 private:
-    adc_oneshot_unit_handle_t myHandle;
-    const adc_channel_t myChannel;
+    static void initOneshotHandle() noexcept;
+    static adc_oneshot_unit_handle_t myHandle;
+    adc_cali_handle_t myCaliHandle;
+    adc_channel_t myChannel;
     bool myInitialized;
     
 };

@@ -20,37 +20,24 @@ namespace driver::adc{
 namespace
 {
 constexpr adc_channel_t InvalidChannel{static_cast<adc_channel_t>(0x0FU)};
-} // namespace
 /**
  * @brief Converts a pin number to an ADC channel.
  * 
  * @param[in] pin ADC pin.
  * @return The corresponding ADC channel.
  */
-static adc_channel_t pinToChannel(std::uint8_t pin) {
-    switch (pin)
-    {
-        case 0:
-            return ADC_CHANNEL_0;
-        case 1:
-            return ADC_CHANNEL_1;
-        case 2:
-            return ADC_CHANNEL_2;
-        case 3:
-            return ADC_CHANNEL_3;
-        case 4:
-            return ADC_CHANNEL_4;
-        case 5:
-            return ADC_CHANNEL_5;
-        case 6:
-            return ADC_CHANNEL_6;
-        case 7:
-            return ADC_CHANNEL_7;
-        default:
-            return InvalidChannel;
-    }
-    
+adc_channel_t pinToChannel(std::uint8_t pin) {
+    constexpr auto invalidChannel = static_cast<std::size_t>(InvalidChannel);
+    constexpr std::size_t min{1U};
+    constexpr std::size_t max{4U};
+    const bool inRange{(min <= pin) && (max >= pin)};
+    const std::size_t adcPin{inRange ? pin - 1U: invalidChannel};
+    return static_cast<adc_channel_t>(adcPin);
 }
+} // namespace
+
+/** Singleton ADC oneshot handle. */
+adc_oneshot_unit_handle_t Esp32s3::myHandle{};
 
 /**
  * @brief Constructor.
@@ -58,22 +45,32 @@ static adc_channel_t pinToChannel(std::uint8_t pin) {
  * @param[in] pin ADC pin. Must be supported by ESP32-S3.
  */
 Esp32s3::Esp32s3(std::uint8_t pin) noexcept 
-    : myHandle{}
+    : myCaliHandle{}
     , myChannel{pinToChannel(pin)}
     , myInitialized{InvalidChannel != myChannel}
     {
         // Configure ADC if the channel is valid.
         if (myInitialized)
         {
-            adc_oneshot_unit_init_cfg_t initCfg{};
-            initCfg.unit_id = ADC_UNIT_1;
-            adc_oneshot_new_unit(&initCfg, &myHandle);
+            // Init oneshot.
+            initOneshotHandle();
+            adc_unit_t unit{ADC_UNIT_1};
+            adc_oneshot_io_to_channel(static_cast<int>(pin), &unit, &myChannel);
 
             adc_oneshot_chan_cfg_t config{
                 .atten = ADC_ATTEN_DB_12,
                 .bitwidth = ADC_BITWIDTH_12
             };
             adc_oneshot_config_channel(myHandle, myChannel, &config);
+
+            // 2. Initialize Calibration after adc_oneshot_config_channel
+            adc_cali_curve_fitting_config_t caliConfig{
+                .unit_id = ADC_UNIT_1,
+                .chan = myChannel,
+                .atten = ADC_ATTEN_DB_12,
+                .bitwidth = ADC_BITWIDTH_12,
+            };
+            adc_cali_create_scheme_curve_fitting(&caliConfig, &myCaliHandle);
         }
     }
 /**
@@ -82,7 +79,7 @@ Esp32s3::Esp32s3(std::uint8_t pin) noexcept
  */
  Esp32s3::~Esp32s3() noexcept{
     // Genomför cleanup; se till att frigöra resurser och hantera eventuella fel.
-    adc_oneshot_del_unit(myHandle);
+    if (myCaliHandle) { adc_cali_delete_scheme_curve_fitting(myCaliHandle); }
     return;
  }
 
@@ -96,10 +93,11 @@ Esp32s3::Esp32s3(std::uint8_t pin) noexcept
 
 std::uint16_t Esp32s3::readRaw() const noexcept {
     if (!myInitialized) { return 0U; }
-    int value{};
-    adc_oneshot_read(myHandle, myChannel, &value);
-    return static_cast<std::uint16_t>(value);
+    int raw{};
+    adc_oneshot_read(myHandle, myChannel, &raw);
+    return static_cast<std::uint16_t>(raw);
 }
+
 /**
  * @brief Reads the ADC value in volts.
  * 
@@ -107,9 +105,12 @@ std::uint16_t Esp32s3::readRaw() const noexcept {
  */
 std::uint16_t Esp32s3::readVolt() const noexcept
 {
-    std::uint16_t raw = readRaw();
-    return static_cast<std::uint16_t>((raw / 4095.0f) * 3300.0f);
+    const auto raw = static_cast<int>(readRaw());
+    int voltage_mv{};
+    adc_cali_raw_to_voltage(myCaliHandle, raw, &voltage_mv);
+    return static_cast<std::uint16_t>(voltage_mv);
 }
+
 /**
  * @brief Checks the status of the ADC.
  * 
@@ -118,6 +119,19 @@ std::uint16_t Esp32s3::readVolt() const noexcept
 bool Esp32s3::isInitialized() const noexcept {
 
     return myInitialized;
+}
+
+void Esp32s3::initOneshotHandle() noexcept
+{
+    static bool initialized{false};
+
+    if (!initialized)
+    {
+        adc_oneshot_unit_init_cfg_t initCfg{};
+        initCfg.unit_id = ADC_UNIT_1;
+        adc_oneshot_new_unit(&initCfg, &myHandle);
+        initialized = true;
+    }
 }
 
 } // namespace driver::adc

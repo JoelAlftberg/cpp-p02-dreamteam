@@ -69,6 +69,13 @@ public:
             timers_[index] = factory.timer(wifiLedTimerSettings);
         }
 
+        const auto& temperatureTimerSettings = config.getTimer(driver::timer::Id::Temperature);
+        if (temperatureTimerSettings.isEnabled)
+        {
+            const auto index = to_idx(driver::timer::Id::Temperature);
+            timers_[index] = factory.timer(temperatureTimerSettings);
+        }
+
         const auto& temperatureAdcSettings = config.getADC(driver::adc::Id::Temperature);
         if (temperatureAdcSettings.isEnabled)
         {
@@ -96,9 +103,12 @@ public:
     void initialize() noexcept 
     {
         auto& wifiLedTimer = timers_[to_idx(driver::timer::Id::WifiLed)];
+        auto& temperatureTimer = timers_[to_idx(driver::timer::Id::Temperature)];
+
         wifi_->connect();
         mqtt_->startClient();
         wifiLedTimer->start();
+        temperatureTimer->start();
         serial_->initialize();
         tempsensor_->start();
         
@@ -109,11 +119,16 @@ public:
     { 
         auto& blinkTimer = timers_[to_idx(driver::timer::Id::Blink)]; 
         auto& wifiLedTimer = timers_[to_idx(driver::timer::Id::WifiLed)];
+        auto& temperatureTimer = timers_[to_idx(driver::timer::Id::Temperature)];
         auto& ledYellow = gpios_[to_idx(driver::gpio::Id::LedYellow)];
         auto& ledBlue = gpios_[to_idx(driver::gpio::Id::LedBlue)];
 
+        (void) (temperatureTimer);
+        
+        
         blinkTimer->tick();
         wifiLedTimer->tick();
+        temperatureTimer->tick();
 
         if (blinkTimer->hasTimedOut())
         {
@@ -123,6 +138,14 @@ public:
         if (wifi_->isConnected() && wifiLedTimer->hasTimedOut())
         {
             ledBlue->toggle();
+        }
+
+        if (temperatureTimer->hasTimedOut())
+        {
+            std::int16_t temperature = tempsensor_->readCelsius();
+            char buf[8U];
+            std::snprintf(buf, sizeof(buf), "%i", temperature);
+            mqtt_->publish("dreamteam-p02/temperature", buf);
         }
 
         char incomingByte;
