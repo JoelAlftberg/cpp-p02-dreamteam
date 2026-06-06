@@ -7,11 +7,8 @@
 
 namespace driver::mqtt
 {
-
-struct Settings
-{
-
-};
+/** MQTT settings. */
+struct Settings{};
 
 /**
  * @brief MQTT driver interface.
@@ -24,6 +21,9 @@ public:
      */
     virtual ~Interface() noexcept = default;
 
+    /**
+     * @brief Start the MQTT client.
+     */
     virtual void startClient() noexcept = 0;
 
     /**
@@ -55,7 +55,6 @@ public:
      * @return True on success, false on failure.
      */
     virtual bool publish(const char* broker, const std::uint8_t* buf, std::uint8_t bufLen) noexcept = 0;
-
 
     /**
      * @brief Receive data from subscribed broker.

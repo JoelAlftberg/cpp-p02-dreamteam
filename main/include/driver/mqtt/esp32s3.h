@@ -4,18 +4,14 @@
 #pragma once
 
 #include <cstdint>
+
 #include "driver/mqtt/interface.h"
 #include "esp_event.h"
-//#include "driver/mqtt.h"
 #include "mqtt_client.h"
 
 namespace driver::mqtt
 {
-
-struct Esp32s3Settings : public Settings
-{
-
-};
+struct Esp32s3Settings : public Settings{};
 
 /**
  * @brief MQTT driver interface.
@@ -24,7 +20,6 @@ class Esp32s3 final : public Interface
 {
 public:
     /** @brief Constructor. */
-
     explicit Esp32s3(const char* url) noexcept;
 
     /**
@@ -32,7 +27,9 @@ public:
      */
     ~Esp32s3() noexcept override;
 
-
+    /**
+     * @brief Start MQTT client.
+     */
     void startClient() noexcept override;
 
     /**
