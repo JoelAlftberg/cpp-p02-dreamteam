@@ -4,8 +4,8 @@
 
 #include "driver/adc/interface.h"
 
-namespace driver::tempsensor{
-
+namespace driver::tempsensor
+{
 struct Settings
 {
     driver::adc::Interface* adc;
