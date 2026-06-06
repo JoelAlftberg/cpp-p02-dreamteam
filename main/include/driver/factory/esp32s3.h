@@ -15,10 +15,16 @@
 
 namespace driver::factory
 {
+// I would consider defining the factory methods inside a cpp file, even though they're quite small.
+// However, I do think that it's completely fine to define them here. Here I'm like 60/40 in favor
+// of placing them in a cpp file.
 class Esp32s3 final : public Interface 
 {
 public:
     Esp32s3() noexcept = default;
+
+    // I would've added a default destructor for clarity, but it's fine; the compiler will
+    // generate one for you if you don't add one.
 
     std::unique_ptr<adc::Interface> adc(const adc::Settings& settings) const noexcept override
     {
@@ -59,6 +65,8 @@ public:
     {
         return std::make_unique<mqtt::Esp32s3>(nullptr);
     }
-};
 
-}
+    // I would delete copy and move constructors, as well as the corresponding assignment operators,
+    // unless you indent to support the operations for this class.
+};
+} // namespace driver::factory
