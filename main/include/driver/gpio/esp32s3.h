@@ -24,10 +24,12 @@ public:
     void off() noexcept override;
     void toggle() noexcept override;
     bool read() const noexcept override;
+
+    // Consider deleting the copy and move constructors + the corresponding assignment operators.
+
 private:
     const std::uint8_t myPin;
     const Mode myMode;
 
 };
-
 }// namespace driver::gpio

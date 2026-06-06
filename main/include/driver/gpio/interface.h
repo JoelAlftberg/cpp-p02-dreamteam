@@ -5,7 +5,6 @@
 
 namespace driver::gpio
 {
-
 struct Settings
 {
     bool isEnabled = false;

@@ -8,7 +8,6 @@
 
 namespace driver::gpio
 {
-
 struct StubSettings final : public Settings
 {
     std::uint8_t pin;
@@ -23,8 +22,12 @@ public:
         , myMode{mode}
         , myState{false}
     {
+        // No need to ignore myNode - only do this for input arguments.
         (void)myMode;
-        std::printf("Initializing GPIO pin %u with mode %u\n", pin, static_cast<std::uint8_t>(mode));
+
+        // How about using a local constant for the cast?
+        const auto modeId = static_cast<std::uint8_t>(mode);
+        std::printf("Initializing GPIO pin %u with mode %u\n", pin, modeId);
     }
 
     ~Stub() noexcept override = default;
