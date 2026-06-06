@@ -19,7 +19,6 @@
 
 #include "driver/config/interface.h"
 
-
 namespace driver::config
 {
 /**
@@ -55,6 +54,8 @@ public:
     Esp32s3& operator=(Esp32s3&&)     = delete;
 
 private:
+    // Prefer the 'my' prefix for member variables (e.g. myAdcConfig) to make them easier to identify and search for.
+    // Trailing underscores are also a common and perfectly valid convention.
     std::array<adc::Esp32s3Settings, static_cast<std::size_t>(adc::Id::COUNT)> adcConfigs_; 
     std::array<gpio::Esp32s3Settings, static_cast<std::size_t>(gpio::Id::COUNT)> gpioConfigs_; 
     std::array<timer::Esp32s3Settings, static_cast<std::size_t>(timer::Id::COUNT)> timerConfigs_; 
