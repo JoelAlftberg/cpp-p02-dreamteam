@@ -2,17 +2,12 @@
 
 namespace driver::wifi
 {
-
-struct Settings 
-{
-
-};
+struct Settings{};
 
 class Interface 
 {
 public:
     virtual ~Interface() noexcept = default;
-
     virtual bool connect() noexcept = 0;
     virtual bool disconnect() noexcept = 0;
     virtual bool isConnected() const noexcept = 0;

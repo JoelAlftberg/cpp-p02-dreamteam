@@ -5,7 +5,6 @@
 
 namespace driver::wifi
 {
-
 struct Esp32s3Settings final : public Settings
 {
     const char* ssid;
@@ -21,9 +20,10 @@ public:
     bool connect() noexcept override;
     bool disconnect() noexcept override;
     bool isConnected() const noexcept override;
+
 private:
     const char* mySsid;
     const char* myPassword;
     bool connected;
 };
-}// namespace driver::wifi
+} // namespace driver::wifi
