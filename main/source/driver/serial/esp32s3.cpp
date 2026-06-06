@@ -21,9 +21,7 @@ bool Esp32s3::initialize() noexcept
     esp_err_t configStatus = uart_param_config(port_, &config_);
 
     setBaudRate(baudRate_);
-    
     uart_set_pin(port_, 43U, 44U, UART_PIN_NO_CHANGE, UART_PIN_NO_CHANGE);
-    
     initialized_ = (ESP_OK == configStatus  ? true : false);
     return initialized_;
 }
@@ -41,8 +39,7 @@ Esp32s3::~Esp32s3() noexcept
 std::size_t Esp32s3::readBytes(uint8_t* dest, std::size_t maxLen) noexcept
 {
     if (getAvailableData() == 0) { return 0; }
-
-    int bytesRead = uart_read_bytes(port_, dest, maxLen, 0);
+    auto bytesRead = uart_read_bytes(port_, dest, maxLen, 0);
     return (bytesRead > 0 ? static_cast<std::size_t>(bytesRead) : 0);
 } 
 
@@ -50,27 +47,19 @@ std::size_t Esp32s3::readBytes(uint8_t* dest, std::size_t maxLen) noexcept
 const char* Esp32s3::readString() noexcept
 {
     if (0U == getAvailableData()) { return nullptr; }
-    
-    std::size_t index{0};
+    std::size_t index{0U};
 
-    while (index < RxBufSize -1)
+    while (index < (RxBufSize - 1U))
     {
         std::uint8_t rxByte{0U};
 
-        if (readBytes(&rxByte, 1) == 0) { break; }
+        if (readBytes(&rxByte, sizeof(rxByte)) == 0U) { break; }
 
-        if ('\n' == rxByte or '\r' == rxByte)
-        {
-            break;
-        }
-
+        if ('\n' == rxByte or '\r' == rxByte) { break; }
         rxBuffer_[index++] = rxByte;
     }
-
     rxBuffer_[index] = '\0';
-
     return reinterpret_cast<const char*>(rxBuffer_);
-
 }
 
 // -----------------------------------------------------------------------------
@@ -96,10 +85,8 @@ bool Esp32s3::isInitialized() const noexcept
 // -----------------------------------------------------------------------------
 std::size_t Esp32s3::getAvailableData() const noexcept
 {
-    std::size_t availableData{0};
-
-    if (uart_get_buffered_data_len(port_, &availableData) != ESP_OK) { return 0; } 
-    
+    std::size_t availableData{0U};
+    if (uart_get_buffered_data_len(port_, &availableData) != ESP_OK) { return 0U; } 
     return availableData;
 }
 
@@ -109,5 +96,4 @@ void Esp32s3::setBaudRate(std::uint32_t baudRate) noexcept
     baudRate_ = baudRate;
     uart_set_baudrate(port_ , baudRate_);
 }
-
 } // namespace driver::seria

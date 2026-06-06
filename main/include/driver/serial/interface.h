@@ -1,18 +1,14 @@
 #pragma once 
 
+#include <cstddef> // Included for std::size_t.
 #include <cstdint>
 
 namespace driver::serial
 {
-
-struct Settings
-{
-
-};
+struct Settings{};
 
 class Interface
 {
-
 public:
     virtual ~Interface() noexcept = default;
 
@@ -29,10 +25,5 @@ public:
     virtual bool isInitialized() const noexcept = 0;
 
     virtual std::size_t getAvailableData() const noexcept = 0;
-
-private:
-
 };
-
 } // namespace driver::serial
-
