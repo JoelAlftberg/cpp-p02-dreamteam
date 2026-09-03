@@ -6,11 +6,7 @@
 
 namespace driver::timer
 {
-
-struct Esp32s3Settings final : public Settings
-{
-
-};                        
+struct Esp32s3Settings final : public Settings{};                        
 
 class Esp32s3 final : public Interface
 {
@@ -45,11 +41,8 @@ private:
     void updateCounter() noexcept;
 
     std::int64_t myTimeout_us;
-
     std::int64_t myCounter_us;
-
     std::int64_t myLastTime_us;
-    
     bool myRunning;
 };
-}
+} // namespace driver::timer

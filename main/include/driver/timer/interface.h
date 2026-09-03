@@ -5,11 +5,10 @@
 
 namespace driver::timer
 {
-
 struct Settings
 {
-    bool isEnabled = false;
-    std::uint32_t timeout_ms = 1000U;
+    bool isEnabled{false};
+    std::uint32_t timeout_ms{1000U};
 };
 
 class Interface
@@ -70,4 +69,4 @@ public:
      */
     virtual std::uint32_t getTimeout() noexcept = 0;
 };
-} // Namespace timer
+} // namespace timer

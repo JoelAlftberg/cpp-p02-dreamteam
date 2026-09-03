@@ -1,50 +1,53 @@
 #include <cstdint>
 #include <cstdio>
+
 #include "driver/tempsensor/esp32s3.h"
 #include "driver/temperature_sensor.h"
-
 #inclue "esp_log.h"
 
-namespace driver::tempsensor {
-
-Esp32s3::Esp32s3() noexcept :
-    handle{},
-    myState{false}
+namespace driver::tempsensor
+{
+// -----------------------------------------------------------------------------
+Esp32s3::Esp32s3() noexcept 
+    : handle{}
+    , myState{false}
 {
     constexpr int rangeMin{20};
     constexpr int rangeMax{50};
-    temperature_sensor_config_t config = 
-        TEMPERATURE_SENSOR_CONFIG_DEFAULT(rangeMin, rangeMax);
+
+    auto config = TEMPERATURE_SENSOR_CONFIG_DEFAULT(rangeMin, rangeMax);
     temperature_sensor_install(&config, &handle);
 }
 
+// -----------------------------------------------------------------------------
 Esp32s3::~Esp32s3() noexcept
 {
     temperature_sensor_uninstall(handle);
 }
 
+// -----------------------------------------------------------------------------
 std::int16_t Esp32s3::readCelsius() const noexcept
 {
-    float temp = 0.0f;
+    float temp{};
 
     // Check if sensor is started, if not return 0
-    if (temperature_sensor_get_celsius(handle, &temp) != ESP_OK) {
-        return 0;
-    }
+    if (temperature_sensor_get_celsius(handle, &temp) != ESP_OK) { return 0; }
+
     // Round to nearest integer and convert to uint16_t
     return static_cast<std::int16_t>(temp + 0.5f);
 }
 
+// -----------------------------------------------------------------------------
 void Esp32s3::start() noexcept
 {
     temperature_sensor_enable(handle);
     myState = true;
 }
 
+// -----------------------------------------------------------------------------
 void Esp32s3::stop() noexcept
 {
     temperature_sensor_disable(handle);
     myState = false;
 }
-
 } // namespace driver::tempsensor

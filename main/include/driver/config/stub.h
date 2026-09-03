@@ -25,6 +25,7 @@ class Stub final : public Interface
 {
 public:
 
+    // Explicit is not needed here, since this constructor doesn't have any input arguments.
     explicit Stub() noexcept;
 
     void delay_ms(std::uint16_t ms) noexcept override;

@@ -2,11 +2,9 @@
 
 namespace driver::adc 
 {
-
 enum class Id
 {
     Temperature,
-    COUNT
+    COUNT // Try to be consistens - Count would be preferred.
 };
-
-}
+} // namespace driver::adc

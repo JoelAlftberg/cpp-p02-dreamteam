@@ -1,5 +1,6 @@
 #pragma once
 
+// Standard headers first, please. :)
 #include "driver/mqtt/interface.h"
 #include "driver/wifi/interface.h"
 #include <cstdint>
@@ -7,23 +8,21 @@
 
 namespace driver
 {
-    namespace adc { class Interface; struct Settings; }
-    namespace gpio { class Interface; struct Settings; }
-    namespace serial { class Interface; struct Settings; }
-    namespace timer { class Interface; struct Settings; }
-    namespace tempsensor { class Interface; struct Settings;}
-    namespace config { class Interface; struct Settings;}
-    namespace wifi { class Interface; struct Settings;}
-    namespace mqtt { class Interface; struct Settings; }
+namespace adc { class Interface; struct Settings; }
+namespace gpio { class Interface; struct Settings; }
+namespace serial { class Interface; struct Settings; }
+namespace timer { class Interface; struct Settings; }
+namespace tempsensor { class Interface; struct Settings;}
+namespace config { class Interface; struct Settings;}
+namespace wifi { class Interface; struct Settings;}
+namespace mqtt { class Interface; struct Settings; }
 } // namespace driver
 
 namespace driver::factory
 {
-
 class Interface
 {
 public:
-
     virtual ~Interface() noexcept = default;
 
     virtual std::unique_ptr<adc::Interface> adc(const adc::Settings& settings) const noexcept = 0;
@@ -42,5 +41,4 @@ public:
 
     virtual std::unique_ptr<mqtt::Interface> mqtt(const mqtt::Settings& settings) const noexcept = 0;
 };
-
-}
+} // namespace driver::factory
