@@ -14,8 +14,11 @@
 <<<<<<< HEAD
 namespace driver::ml
 =======
+<<<<<<< HEAD
+namespace driver::ml
+=======
 namespace ml
->>>>>>> 49dbbf0 (Fix: Unified file casing to lowercase adaptive.h/cpp)
+>>>>>>> d1dc34b (trying)
 {
 /** One-dimensional matrix. */
 using Matrix1d = std::vector<double>;
