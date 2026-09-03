@@ -6,11 +6,7 @@
 
 namespace driver::timer
 {
-
-struct StubSettings final : public Settings
-{
-    
-};
+struct StubSettings final : public Settings{};
 
 class Stub final : public Interface
 {
@@ -52,11 +48,8 @@ public:
     bool hasTimedOut() noexcept override
     {
         if (!myRunning) { return false; }
-
         const bool timeout{myTimeout_us <= myCounter_us}; 
-
         if (timeout) { myCounter_us = 0U; }
-
         return timeout;
     }
 
@@ -72,6 +65,9 @@ public:
      */
     void tick() noexcept override
     {
+        // Consider using a constexpr instead of the magic number 10000U:
+        // constexpr std::int64_t increment{10000};
+
         /** The number 10000 is tied to the task delay in main of 10 ms **/
         if (myRunning) { myCounter_us += 10000U; }
     }
@@ -94,18 +90,19 @@ public:
 
 private:
 
+    // Remove this declaration - the method does not exist.
     void updateCounter() noexcept;
 
-    /**Timeout in microseconds */
+    /** Timeout in microseconds. */
     std::int64_t myTimeout_us;
 
     /** Internal microseconds counter. */
     std::int64_t myCounter_us;
 
+    /** Last (previous) timestamp. */
     std::int64_t myLastTime_us;
     
     /** True if the timer is running, false otherwise. */
     bool myRunning;
-
 };
-} // Namespace timer
+} // namespace timer

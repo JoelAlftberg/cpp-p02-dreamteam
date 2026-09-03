@@ -7,7 +7,6 @@
 
 namespace driver::adc
 {
-
 struct Esp32s3Settings final : public Settings
 {
     std::uint8_t pin;
@@ -19,7 +18,7 @@ public:
     /**
      * @brief Constructor.
      * 
-     * @param[in] pin ADC pin. Must be withing range 0-7.
+     * @param[in] pin ADC pin. Must be within range 0-7.
      */
     explicit Esp32s3(std::uint8_t pin) noexcept;
 
@@ -41,10 +40,10 @@ public:
 private:
     static void initOneshotHandle() noexcept;
     static adc_oneshot_unit_handle_t myHandle;
+
     adc_cali_handle_t myCaliHandle;
     adc_channel_t myChannel;
-    bool myInitialized;
-    
+    bool myInitialized;    
 };
-}
+} // namespace driver::adc
 

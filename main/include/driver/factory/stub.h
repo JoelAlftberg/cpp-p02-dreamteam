@@ -13,11 +13,11 @@
 
 namespace driver::factory
 {
-
 class Stub final : public Interface 
 {
 public:
-    
+    // Consider using '= default' instead of '{}' here.
+    // No need to mark a default constructor explicit, but it doesn't hurt. :)
     explicit Stub() noexcept
     {}
 
@@ -34,6 +34,10 @@ public:
 
     std::unique_ptr<serial::Interface> serial(const serial::Settings& settings) noexcept override
     {
+        // Nice way to return a smart pointer as well as keeping a reference (in the shape of a
+        // raw pointer) here. The unique pointer is owned by the caller, but you can still access
+        // it from here. Just make sure that serialStub_ isn't nullptr before usage (in case the
+        // unique pointer has been deleted).
         auto stub = std::make_unique<serial::Stub>(); 
         serialStub_ = stub.get();
         return stub;
@@ -46,28 +50,25 @@ public:
     }
 
     std::unique_ptr<tempsensor::Interface> tempsensor(
-            const tempsensor::Settings& settings
-            ) noexcept override
+        const tempsensor::Settings& settings) noexcept override
     {
         auto stub = std::make_unique<tempsensor::Stub>();
         tempsensorStub_ = stub.get();
         return stub;     
     }
 
-    driver::tempsensor::Stub* getTempsensorStub() const
+    tempsensor::Stub* getTempsensorStub() const
     {
         return tempsensorStub_;
     }
 
-    driver::serial::Stub* getSerialStub() const
+    serial::Stub* getSerialStub() const
     {
         return serialStub_;
     }
 
 private:
-    driver::tempsensor::Stub* tempsensorStub_{nullptr};
-    driver::serial::Stub* serialStub_{nullptr};
-
+    tempsensor::Stub* tempsensorStub_{nullptr};
+    serial::Stub* serialStub_{nullptr};
 };
-    
-}
+} // namespace driver::factory

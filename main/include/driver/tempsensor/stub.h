@@ -1,20 +1,20 @@
 #pragma once
+
 #include <cstdint>
 #include <cstdio>
+
 #include "driver/tempsensor/interface.h"
 
-namespace driver::tempsensor{
-
-struct StubSettings final : public Settings 
+namespace driver::tempsensor
 {
+struct StubSettings final : public Settings{};                     
 
-};                     
-
-class Stub final : public Interface {
+class Stub final : public Interface
+{
 public:
     explicit Stub() noexcept
-        : status{false},
-        myTemp{0U}
+        : status{false}
+        , myTemp{0U}
     {
         std::printf("Stub temperature sensor created.\n");
     }
@@ -24,23 +24,20 @@ public:
         std::printf("Stub temperature sensor destroyed.\n");
     }
    
-    std::int16_t readCelsius() const noexcept override{
+    std::int16_t readCelsius() const noexcept override
+    {
         if (!status) return 0;
         return myTemp;
 
+        // Can be simplified to this:
+        // return status ? myTemp : 0;
     }
 
-    void start() noexcept override {
-        status = true;
-    }
+    void start() noexcept override { status = true; }
 
-    void stop() noexcept override {
-        status = false;
+    void stop() noexcept override { status = false; }
 
-    }
-    void simulatemyTemp(std::int16_t temp) noexcept { 
-        myTemp = temp;
-    }
+    void simulatemyTemp(std::int16_t temp) noexcept { myTemp = temp; }
  
     Stub(const Stub&)                   = delete;
     Stub(Stub&&)                        = delete;
@@ -48,6 +45,7 @@ public:
     Stub& operator=(Stub&&)             = delete;
 
 private:
+    // Consider renaming this variable to myStatus.
     bool status;
     std::int16_t myTemp;
 };

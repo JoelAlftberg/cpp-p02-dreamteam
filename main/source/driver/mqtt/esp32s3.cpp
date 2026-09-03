@@ -7,11 +7,13 @@
 #include "esp_log.h"
 #include "mqtt_client.h"
 
-namespace driver::mqtt{
+namespace driver::mqtt
+{
 namespace
 {
-static constexpr const char* Tag{"MQTT"};
-static constexpr const char* DefaultUrl{"mqtt://broker.hivemq.com"};
+// No need for the static keyword inside an anonymous namespace.
+constexpr const char* Tag{"MQTT"};
+constexpr const char* DefaultUrl{"mqtt://broker.hivemq.com"};
 } // namespace
 
 // -------------------------------------------------------------------
@@ -20,19 +22,19 @@ Esp32s3::Esp32s3(const char* url) noexcept
     , myUrl{nullptr == url ? DefaultUrl : url}
     , myRxBufLen{}
     , myClient{nullptr}
-    {
-        // Create MQTT configuration and client, register event handler and start client.
-        esp_mqtt_client_config_t mqttConfig{};
-        mqttConfig.broker.address.uri = myUrl;
-        myClient = esp_mqtt_client_init(&mqttConfig);
-
-    }
+{
+    // Create MQTT configuration and client, register event handler and start client.
+    esp_mqtt_client_config_t mqttConfig{};
+    mqttConfig.broker.address.uri = myUrl;
+    myClient = esp_mqtt_client_init(&mqttConfig);
+}
 
 // -------------------------------------------------------------------
 Esp32s3::~Esp32s3() noexcept
 {
     // Stop and destroy MQTT client if it exists.
-    if (nullptr != myClient) {
+    if (nullptr != myClient) 
+    {
         esp_mqtt_client_stop(myClient);
         esp_mqtt_client_destroy(myClient);
     }
@@ -122,18 +124,13 @@ void Esp32s3::mqttEventHandler(void* handler_args, esp_event_base_t base,
 
         case MQTT_EVENT_DATA:
         {
-            // Skriver ut data temporärt för loggning.
-            {
-                ESP_LOGI(Tag, "Incoming data");
-                 // Topic
-                const std::string topic(event->topic, event->topic_len);
+            ESP_LOGI(Tag, "Incoming data");
+            const std::string topic(event->topic, event->topic_len);
 
-                // Payload
-                const std::string payload(event->data, event->data_len);
+            const std::string payload(event->data, event->data_len);
 
-                ESP_LOGI(Tag, "Topic: %s", topic.c_str());
-                ESP_LOGI(Tag, "Payload: %s", payload.c_str());
-            }
+            ESP_LOGI(Tag, "Topic: %s", topic.c_str());
+            ESP_LOGI(Tag, "Payload: %s", payload.c_str());
             instance->storeReceivedData(event->data, event->data_len);
             break;
         }

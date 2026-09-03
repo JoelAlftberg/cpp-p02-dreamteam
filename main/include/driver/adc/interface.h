@@ -2,14 +2,14 @@
 
 #include "driver/factory/interface.h"
 
+// Consider including standard headers first (just for structure).
 #include <cstdint>
 
 namespace driver::adc
 {
-
 struct Settings
 {
-    bool isEnabled = false;
+    bool isEnabled = false; // Consider using {} instead of =.
 };
 
 class Interface

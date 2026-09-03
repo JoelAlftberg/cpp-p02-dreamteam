@@ -1,10 +1,11 @@
  /**
- * @brief MQTT driver interface.
+ * @brief MQTT driver stub.
  */
 #pragma once
 
 #include <cstdint>
 #include <cstdio>
+
 #include "driver/mqtt/interface.h"
 
 namespace driver::mqtt
@@ -15,14 +16,18 @@ namespace driver::mqtt
 class Stub final : public Interface
 {
 public:
-    explicit Stub() noexcept :
-    myInput{0U}{
+    explicit Stub() noexcept 
+        : myInput{0U}
+    {
         std::printf("MQTT Stub initialized\n");
     }
+
     /**
      * @brief Destructor.
      */
     ~Stub() noexcept override = default;
+
+    //! @remark startClient() must be overriden!
 
     /**
      * @brief Subscribe to broker.
@@ -31,9 +36,13 @@ public:
      *
      * @return True on success, false on failure.
      */
-    bool subscribe(const char* broker) noexcept override{
+    bool subscribe(const char* broker) noexcept override
+    {
         if(nullptr == broker){ return false;}
         return true;
+
+        // Can be simplified to this:
+        // return nullptr != broker;
     }
 
     /**
@@ -44,12 +53,14 @@ public:
      *
      * @return True on success, false on failure.
      */
-    bool publish(const char* broker, const char* msg) noexcept override{
+    bool publish(const char* broker, const char* msg) noexcept override
+    {
         // Print message if valid.
         if ((nullptr == msg) || (nullptr == broker)) { return false; }
         std::printf("%s", msg);
         return true;
     }
+
     /**
      * @brief Public message to broker.
      *
@@ -59,9 +70,9 @@ public:
      *
      * @return True on success, false on failure.
      */
-    bool publish(const char* broker, const std::uint8_t* buf, std::uint8_t bufLen) noexcept override{
-     
-         // Check buffer, terminate if invalid.
+    bool publish(const char* broker, const std::uint8_t* buf, std::uint8_t bufLen) noexcept override
+    { 
+        // Check buffer, terminate if invalid.
         if ((nullptr == buf) || (0U == bufLen) || (nullptr == broker)) { return false; }
 
         // Write each byte one by one.
@@ -72,6 +83,7 @@ public:
         std::printf("\n");
         return true;
     }
+
     /**
      * @brief Receive data from subscribed broker.
      *
@@ -80,17 +92,21 @@ public:
      *
      * @return Number of received bytes, or 0 on failure.
      */
-    std::uint8_t receive(char* buf, std::uint8_t bufLen) noexcept override{
+    std::uint8_t receive(char* buf, std::uint8_t bufLen) noexcept override
+    {
          // Check buffer, terminate if invalid.
         if ((nullptr == buf) || (0U == bufLen)) { return 0U; }
 
-        buf[0] = static_cast<char>(myInput);
-        return 1U;
+        buf[0U] = static_cast<char>(myInput);
+        return sizeof(myInput);
 
     }
-    void simulateInput(std::uint8_t input) noexcept override{ 
+    
+    void simulateInput(std::uint8_t input) noexcept override
+    { 
         myInput = input;
     }
+
     Stub(const Stub&)            = delete; // No copy constructor.
     Stub(Stub&&)                 = delete; // No move constructor.
     Stub& operator=(const Stub&) = delete; // No copy assignment.
@@ -99,6 +115,5 @@ public:
 private:
     /** Simulated input. */
     std::uint8_t myInput;
-    
 };
 } // namespace driver::mqtt

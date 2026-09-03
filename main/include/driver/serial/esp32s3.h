@@ -7,7 +7,6 @@
 
 namespace driver::serial
 {
-
 struct Esp32s3Settings : public Settings
 {
     uart_config_t   uart_config;
@@ -15,16 +14,14 @@ struct Esp32s3Settings : public Settings
     std::uint32_t   baudRate;
 };
 
+// See my comment about constants inside the class in the stub header.
 static constexpr std::size_t RxBufSize{256U};
 static constexpr std::size_t TxBufSize{256U};
 
 class Esp32s3 final : public Interface
 {
-
 public:
-
     explicit Esp32s3(uart_config_t config, uart_port_t port, std::uint32_t baudRate) noexcept;
-
     ~Esp32s3() noexcept;
     
     bool initialize() noexcept override;
@@ -49,6 +46,5 @@ private:
     std::uint32_t baudRate_;
     std::uint8_t rxBuffer_[RxBufSize]{};
     bool initialized_;
-    
 };
-}
+} // namespace driver::serial
