@@ -9,6 +9,7 @@ idf_component_register(
         "source/driver/timer/esp32s3.cpp"
         "source/driver/mqtt/esp32s3.cpp"
         "source/driver/wifi/esp32s3.cpp"
+        "source/driver/ml/lin_reg/adaptive.cpp"
     INCLUDE_DIRS
         "include"
     )
