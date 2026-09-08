@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 /**
  * @file Linear regression model interface.
  */
@@ -56,4 +55,3 @@ public:
     [[nodiscard]] virtual double predict(double input) const noexcept = 0;
 };
 } // namespace ml::lin_reg
->>>>>>> 3727319 (Fix: Unified file casing to lowercase adaptive.h/cpp)
