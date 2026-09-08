@@ -24,7 +24,7 @@ public:
     /**
      * @brief Destructor.
      */
-    ~Smart() noexcept override;
+    ~Smart() noexcept override = default;
 
     std::int16_t readCelsius() const noexcept override;
     void start() noexcept override;
@@ -39,7 +39,5 @@ private:
     driver::adc::Interface& myAdc;
     ml::lin_reg::Interface& myLinReg;
     bool myState{false};
-
-
 };
 } // namespace driver::smart

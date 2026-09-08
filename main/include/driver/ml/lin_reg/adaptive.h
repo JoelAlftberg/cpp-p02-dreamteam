@@ -45,8 +45,7 @@ public:
      *
      * @return True if training was performed, false if input argument is invalid.
      */
-    bool train(std::size_t epochCount, double learningRate = 0.01,
-                double precisionThreshold = 0.999999) noexcept;
+    bool train(std::size_t epochCount, double precisionThreshold = 0.999999) noexcept;
 
     Adaptive()                           = delete; // No default constructor.
     Adaptive(const Adaptive&)            = delete; // No copy constructor.
