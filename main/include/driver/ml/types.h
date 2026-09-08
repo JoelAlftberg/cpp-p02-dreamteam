@@ -6,7 +6,7 @@
 #include <cstdint>
 #include <vector>
 
-namespace ml
+namespace driver::ml
 {
 /** One-dimensional matrix. */
 using Matrix1d = std::vector<double>;

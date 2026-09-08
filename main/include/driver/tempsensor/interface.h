@@ -8,7 +8,8 @@ namespace driver::tempsensor
 {
 struct Settings
 {
-    driver::adc::Interface* adc;
+    driver::adc::Interface* adc{nullptr};
+    driver::lin_reg::Inteface* linReg{nullptr};
 };
 
 class Interface
