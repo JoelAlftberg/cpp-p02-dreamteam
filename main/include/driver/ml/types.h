@@ -11,14 +11,7 @@
 #include <cstdint>
 #include <vector>
 
-<<<<<<< HEAD
 namespace driver::ml
-=======
-<<<<<<< HEAD
-namespace driver::ml
-=======
-namespace ml
->>>>>>> d1dc34b (trying)
 {
 /** One-dimensional matrix. */
 using Matrix1d = std::vector<double>;
@@ -33,7 +26,4 @@ using Matrix3d = std::vector<Matrix2d>;
 using MatrixU32 = std::vector<std::uint32_t>;
 
 } // namespace ml
-<<<<<<< HEAD
-=======
 >>>>>>> Stashed changes
->>>>>>> 49dbbf0 (Fix: Unified file casing to lowercase adaptive.h/cpp)
