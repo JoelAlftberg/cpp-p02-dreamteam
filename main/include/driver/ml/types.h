@@ -1,5 +1,3 @@
-<<<<<<< Updated upstream
-=======
 /**
  * @file Machine learning definitions and types.
  */
@@ -23,4 +21,3 @@ using Matrix3d = std::vector<Matrix2d>;
 using MatrixU32 = std::vector<std::uint32_t>;
 
 } // namespace ml
->>>>>>> Stashed changes
