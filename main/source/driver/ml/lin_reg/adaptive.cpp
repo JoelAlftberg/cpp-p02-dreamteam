@@ -114,6 +114,7 @@ bool Adaptive::train(const std::size_t epochCount, const double precisionThresho
     return true;
 }
 
+
 // -----------------------------------------------------------------------------
 void Adaptive::optimize(const double input, const double output, const double learningRate) noexcept
 {

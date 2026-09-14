@@ -56,6 +56,9 @@ Esp32s3::Esp32s3() noexcept
     serialConfig_.uart_port = UART_NUM_0;
     serialConfig_.baudRate = 115200U;
 
+    tempsensorConfig_.adc = nullptr;
+    tempsensorConfig_.linReg = nullptr;
+
 }
 
 // -----------------------------------------------------------------------------

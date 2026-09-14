@@ -43,7 +43,8 @@ class Logic final : public Interface
     // using driver::utils::to_idx;
 public:
     // -----------------------------------------------------------------------------
-    explicit Logic(driver::factory::Interface& factory, driver::config::Interface& config) noexcept 
+    explicit Logic(driver::factory::Interface& factory, driver::config::Interface& config, ml::lin_reg::Interface* linReg = nullptr) noexcept
+        : myLinReg{linReg} // Denna förväntas vara tränad redan när vi kommer in => via interfacet kan vi bara träna. 
     {
         const auto& ledSettings = config.getGpio(driver::gpio::Id::LedYellow);
 
@@ -94,6 +95,10 @@ public:
         if (nullptr != adcs_[to_idx(driver::adc::Id::Temperature)])
         {
             driver::tempsensor::Settings tempsensorSettings{adcs_[to_idx(driver::adc::Id::Temperature)].get()};
+
+            // I och med att vi har en smart tempsensor så sätter vi en pekare till den i settings => factoryn kan då kolla om den finns och isf
+            // skapa en smart sensor, annars en vanlig dum TMP36-sensor.
+            tempsensorSettings.linReg = myLinReg;
             tempsensor_ = factory.tempsensor(tempsensorSettings);
         }
         
@@ -366,6 +371,9 @@ private:
 
     // Then you could write as follows:
     // DriverArray<driver::adc::Interface, driver::adc::Id::COUNT> adcs_;
+
+    /** Linear regression model. */
+    ml::lin_reg::Interface* myLinReg;
 
     /* ADCs */
     std::array<std::unique_ptr<driver::adc::Interface>,

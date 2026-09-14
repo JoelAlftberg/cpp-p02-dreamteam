@@ -8,6 +8,7 @@
 #include "driver/adc/esp32s3.h"
 #include "driver/config/esp32s3.h"
 #include "driver/gpio/esp32s3.h"
+#include "driver/tempsensor/smart.h"
 #include "driver/tempsensor/tmp36.h"
 #include "driver/timer/esp32s3.h"
 #include "driver/mqtt/esp32s3.h"
@@ -52,6 +53,12 @@ public:
 
     std::unique_ptr<tempsensor::Interface> tempsensor(const tempsensor::Settings& settings) noexcept override
     {
+        // Kolla om vi har en linReg-model till handa, i så fall skapar vi en smart sensor.
+        if (nullptr != settings.linReg)
+        {
+            return std::make_unique<tempsensor::Smart>(*settings.adc, *settings.linReg);
+        }
+        // Annars kör vi med en TMP36.
         return std::make_unique<tempsensor::Tmp36>(*settings.adc);
     }
 
