@@ -61,42 +61,59 @@ Adaptive::Adaptive(const Matrix1d& trainIn, const Matrix1d& trainOut) noexcept
 double Adaptive::predict(const double input) const noexcept { return myWeight * input + myBias; }
 
 // -----------------------------------------------------------------------------
-bool Adaptive::train(const std::size_t epochCount, const double learningRate, 
-    const double precisionThreshold) noexcept
+bool Adaptive::train(const std::size_t epochCount, const double precisionThreshold) noexcept
 {
-    constexpr std::size_t evaluationInterval{10U};
+    // Learning rate is handle internally by us, modified during training.
+    double learningRate{0.01};
+
     // Check epoch count, return false if 0.
     if (0U == epochCount) { return false; }
 
-    // Check learning rate, return false if outside range (0.0, 1.0).
-    if ((0.0 >= learningRate) || (1.0 <= learningRate)) { return false; }
-
     if((0.0 >= precisionThreshold) || (1.0 <= precisionThreshold)) { return false; }
+    double previousPrecision{};
 
-    for (std::size_t epoch{}; epoch < epochCount; ++epoch)
-    {
+    for (std::size_t epoch{}; epoch < epochCount; ++epoch){
 
         shuffle();
 
-        for (const auto i : myTrainOrder)
-        {
+        for (const auto i : myTrainOrder){
             const auto input  = myTrainIn[i];
             const auto output = myTrainOut[i];
             optimize(input, output, learningRate);
         }
-        const auto evaluate = ((0U < epoch) && (0U == (epoch % evaluationInterval)));
-        if(evaluate){
-            const auto precision = computePrecision();
-            if(precision >= precisionThreshold){
-                std::printf("Finished training with precision %g after %zu epochs!\n", 
-                    precision, epoch);
-                return true;
-            }
+        const auto precision = computePrecision();
 
+        // Check if precision threshold has been reached.
+        if (precision >= precisionThreshold){
+            std::printf(
+                "Finished training with precision %g after %zu epochs!\n",
+                precision,
+                epoch + 1U);
+            return true;
         }
+        // Adapt learning rate.
+        if (precision > previousPrecision)
+        {
+            // Check improvement rate, increase LR by 5 % if the too slow.
+            const auto improvement = precision - previousPrecision;
+            if (0.1 > improvement) { learningRate *= 1.05; }
+        }
+        else
+        {
+            // Halve the learning rate is the precision is decreased (too high learning rate).h
+            learningRate *= 0.5;
+        }
+
+        // Clamp the learning rate to range (0.01, 0.25).
+        learningRate = std::clamp(learningRate, 0.01, 0.25);
+
+        // Save precision for next epoch.
+        previousPrecision = precision;
     }
+
     return true;
 }
+
 
 // -----------------------------------------------------------------------------
 void Adaptive::optimize(const double input, const double output, const double learningRate) noexcept
