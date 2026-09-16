@@ -2,8 +2,9 @@
 
 #include <cstdint>
 
+#include "arch/env/hw_platform.h"
 #include "driver/adc/interface.h"
-#include "esp_adc/adc_oneshot.h"
+
 
 namespace driver::adc
 {
