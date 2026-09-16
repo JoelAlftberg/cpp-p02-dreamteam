@@ -1,0 +1,88 @@
+---
+Language: Cpp
+Standard: c++17
+
+# Indentation.
+IndentWidth: 4
+TabWidth: 4
+UseTab: Never
+AccessModifierOffset: -4
+NamespaceIndentation: None
+IndentPPDirectives: None
+ConstructorInitializerIndentWidth: 4
+ContinuationIndentWidth: 4
+IndentCaseLabels: true
+
+# Column limit.
+ColumnLimit: 100
+
+# Braces: opening brace always on its own line, except empty bodies collapse to "{}".
+BreakBeforeBraces: Custom
+BraceWrapping:
+  AfterCaseLabel: true
+  AfterClass: true
+  AfterControlStatement: Always
+  AfterEnum: true
+  AfterFunction: true
+  AfterNamespace: true
+  AfterStruct: true
+  AfterUnion: true
+  AfterExternBlock: true
+  BeforeCatch: true
+  BeforeElse: true
+  BeforeLambdaBody: true
+  BeforeWhile: false
+  IndentBraces: false
+  SplitEmptyFunction: false
+  SplitEmptyRecord: true
+  SplitEmptyNamespace: true
+
+# Collapse trivial bodies onto one line.
+AllowShortFunctionsOnASingleLine: All
+AllowShortIfStatementsOnASingleLine: true
+AllowShortLoopsOnASingleLine: false
+AllowShortBlocksOnASingleLine: Always
+AllowShortCaseLabelsOnASingleLine: false
+AllowShortEnumsOnASingleLine: true
+
+# Pointers and references attach to the type, not the name.
+PointerAlignment: Left
+ReferenceAlignment: Pointer
+
+# Spacing.
+SpaceBeforeParens: ControlStatements
+SpaceAfterTemplateKeyword: false
+SpaceBeforeCpp11BracedList: false
+SpaceInEmptyBlock: false
+Cpp11BracedListStyle: true
+SpacesInAngles: false
+
+# Templates: always break so "template<...>" is on its own line.
+AlwaysBreakTemplateDeclarations: Yes
+
+# Alignment.
+AlignConsecutiveAssignments:
+  Enabled: true
+  AcrossEmptyLines: false
+  AcrossComments: false
+AlignConsecutiveDeclarations: false
+AlignTrailingComments: true
+AlignEscapedNewlines: Left
+AlignOperands: Align
+DerivePointerAlignment: false
+
+# Constructor initializer lists: leading comma, one member per line.
+BreakConstructorInitializers: BeforeComma
+PackConstructorInitializers: Never
+
+# Includes: keep the blank-line-separated groups as written, sort within each.
+IncludeBlocks: Preserve
+SortIncludes: true
+
+# Comments.
+ReflowComments: true
+
+# Misc.
+FixNamespaceComments: true
+KeepEmptyLinesAtTheStartOfBlocks: false
+MaxEmptyLinesToKeep: 1

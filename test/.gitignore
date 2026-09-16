@@ -1,0 +1,21 @@
+# Ignore everything without an extension, then selectively allow files and directories.
+*
+!*.*
+!*/
+
+# Don't ignore makefiles and license files.
+!makefile
+!Makefile
+!LICENSE
+
+# Ignore build artifacts.
+*.o
+*.a
+
+# Ignore text files.
+*.txt
+
+# Ignore IDE directories.
+.vscode/
+.vs/
+.claude/
